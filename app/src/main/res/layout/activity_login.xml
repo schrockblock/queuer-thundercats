@@ -11,19 +11,23 @@
 
     <EditText
         android:id="@+id/et_username"
+        android:hint="@string/username_hint"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
     <EditText
         android:id="@+id/et_password"
+        android:hint="@string/password_hint"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/btn_login"
-        android:text="@string/login_button"
+        android:text="@string/create_account_button"
         android:layout_gravity="center"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content" />
+
+    <include layout="@layout/progress"></include>
 
 </LinearLayout>
