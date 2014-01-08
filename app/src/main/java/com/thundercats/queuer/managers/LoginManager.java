@@ -7,6 +7,10 @@ public class LoginManager {
 
     private LoginManagerCallback callback;
 
+    /**
+     * Sets the callback.
+     * @param callback The LoginManagerCallback object.
+     */
     public void setCallback(LoginManagerCallback callback) {
         this.callback = callback;
     }
