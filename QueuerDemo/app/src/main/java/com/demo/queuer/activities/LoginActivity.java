@@ -1,21 +1,16 @@
 package com.demo.queuer;
 
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.demo.queuer.R;
 import com.demo.queuer.managers.LoginManager;
-import com.demo.queuer.managers.LoginManagerCallback;
+import com.demo.queuer.interfaces.LoginManagerCallback;
 
 public class LoginActivity extends ActionBarActivity implements LoginManagerCallback{
 

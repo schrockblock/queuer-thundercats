@@ -1,5 +1,7 @@
 package com.demo.queuer.managers;
 
+import com.demo.queuer.interfaces.LoginManagerCallback;
+
 /**
  * Created by eschrock on 1/7/14.
  */

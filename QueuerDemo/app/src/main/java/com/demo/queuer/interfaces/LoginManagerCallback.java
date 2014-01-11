@@ -1,4 +1,4 @@
-package com.demo.queuer.managers;
+package com.demo.queuer.interfaces;
 
 /**
  * Created by eschrock on 1/7/14.
