@@ -10,20 +10,46 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
+import com.android.volley.*;
+import com.android.volley.toolbox.Volley;
 import com.thundercats.queuer.R;
 import com.thundercats.queuer.managers.LoginManager;
-import com.thundercats.queuer.managers.LoginManagerCallback;
+import com.thundercats.queuer.interfaces.LoginManagerCallback;
 
 public class LoginActivity extends ActionBarActivity implements LoginManagerCallback {
 
+    public RequestQueue requestQueue;
 
-    public void startedRequest() {
-
+    public RequestQueue getRequestQueue() {
+        return requestQueue;
     }
 
-    public void finishedRequest(boolean successful) {
+    /**
+     * Create Volley request queue.
+     */
+    public void startedRequest() {
+        this.requestQueue = Volley.newRequestQueue(this);
+    }
 
+    /**
+     *
+     * @param successful
+     */
+    public void finishedRequest(boolean successful) {
+        if (successful) {
+            // SHOW THE NEXT SCREEN (WHICH WE DON'T HAVE)
+        }
+        else {
+            final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+            progressBar.setVisibility(View.INVISIBLE);
+            final TextView textView = (TextView) findViewById(R.id.progress_text);
+            textView.setVisibility(View.VISIBLE);
+            textView.setText("Login unsuccessful. Try again.");
+        }
+        requestQueue.stop();
     }
 
     @Override
@@ -34,12 +60,17 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
         Button login = (Button) findViewById(R.id.btn_login);
         final EditText user = (EditText) findViewById(R.id.et_username);
         final EditText pass = (EditText) findViewById(R.id.et_password);
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        final TextView textView = (TextView) findViewById(R.id.progress_text);
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LoginManager manager = new LoginManager();
+                LoginManager manager = LoginManager.getInstance();
                 manager.setCallback(LoginActivity.this);
                 try {
+                    progressBar.setVisibility(View.VISIBLE);
+                    textView.setVisibility(View.VISIBLE);
+                    textView.setText("Logging in...");
                     manager.login(user.getText().toString(), pass.getText().toString());
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -1,4 +1,4 @@
-package com.thundercats.queuer.managers;
+package com.thundercats.queuer.interfaces;
 
 /**
  * Created by kmchen1 on 1/7/14.

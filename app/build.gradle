@@ -27,4 +27,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:19.0.0'
     compile files('src/main/libs/annotations.jar')
     compile files('src/main/libs/gson-2.2.4.jar')
+    compile files('src/main/libs/volley.jar')
 }
