@@ -1,31 +1,31 @@
 package com.thundercats.queuer;
 
+import android.app.Application;
+import android.text.TextUtils;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.Volley;
+
 /**
  * Created by kmchen1 on 1/10/14.
  */
 public class ApplicationController extends Application {
 
-    /**
-     * Log or request TAG
-     */
+    /** Log or request TAG */
     public static final String TAG = "VolleyPatterns";
 
-    /**
-     * Global request queue for Volley
-     */
+    /** Global request queue for Volley */
     private RequestQueue mRequestQueue;
 
-    /**
-     * A singleton instance of the application class for easy access in other places
-     */
+    /** Singleton of application class */
     private static ApplicationController sInstance;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-        // initialize the singleton
-        sInstance = this;
+        sInstance = this; // initialize singleton
     }
 
     /**
@@ -41,10 +41,7 @@ public class ApplicationController extends Application {
     public RequestQueue getRequestQueue() {
         // lazy initialize the request queue, the queue instance will be
         // created when it is accessed for the first time
-        if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
-        }
-
+        if (mRequestQueue == null) mRequestQueue = Volley.newRequestQueue(getApplicationContext());
         return mRequestQueue;
     }
 
@@ -58,9 +55,7 @@ public class ApplicationController extends Application {
     public <T> void addToRequestQueue(Request<T> req, String tag) {
         // set the default tag if tag is empty
         req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
-
         VolleyLog.d("Adding request to queue: %s", req.getUrl());
-
         getRequestQueue().add(req);
     }
 
@@ -68,12 +63,10 @@ public class ApplicationController extends Application {
      * Adds the specified request to the global queue using the Default TAG.
      *
      * @param req
-     * @param tag
      */
     public <T> void addToRequestQueue(Request<T> req) {
         // set the default tag if tag is empty
-        req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
-
+        if (req.getTag().equals("")) req.setTag(TAG);
         getRequestQueue().add(req);
     }
 
@@ -84,8 +77,6 @@ public class ApplicationController extends Application {
      * @param tag
      */
     public void cancelPendingRequests(Object tag) {
-        if (mRequestQueue != null) {
-            mRequestQueue.cancelAll(tag);
-        }
+        if (mRequestQueue != null) mRequestQueue.cancelAll(tag);
     }
 }

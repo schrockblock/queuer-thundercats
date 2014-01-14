@@ -1,5 +1,7 @@
 package com.thundercats.queuer;
 
+import android.os.AsyncTask;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -16,6 +18,7 @@ import java.util.Map;
  * Created by kmchen1 on 1/13/14.
  */
 public class GsonRequest<T> extends Request<T> {
+
     private final Gson gson = new Gson();
     private final Class<T> clazz;
     private final Map<String, String> headers;
@@ -31,6 +34,7 @@ public class GsonRequest<T> extends Request<T> {
     public GsonRequest(String url, Class<T> clazz, Map<String, String> headers,
                        Response.Listener<T> listener, Response.ErrorListener errorListener) {
         super(Method.GET, url, errorListener);
+
         this.clazz = clazz;
         this.headers = headers;
         this.listener = listener;
