@@ -26,18 +26,23 @@ import java.net.URL;
 
 public class LoginActivity extends ActionBarActivity implements LoginManagerCallback {
 
+    /**
+     * The cloud server URL.
+     */
     private final String SERVER = "http://queuer-rndapp.rhcloud.com/api/v1/session";
 
-    public RequestQueue requestQueue;
-
+    /**
+     * Returns the cloud server URL.
+     * @return The cloud server URL.
+     */
     public String getServer() {
         return SERVER;
     }
 
-    public RequestQueue getRequestQueue() {
-        return requestQueue;
-    }
-
+    /**
+     * Shows/hides the progress bar.
+     * @param shown Whether or not the progress bar is shown.
+     */
     private void showProgressBar(boolean shown) {
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         if (shown) progressBar.setVisibility(View.VISIBLE);
@@ -45,19 +50,19 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
     }
 
     /**
-     * Create UI thread. Volley request queue.
+     * Indicate to the user (by showing the progress bar) that the Volley request has been created.
      */
     public void startedRequest() {
         showProgressBar(true);
     }
 
     /**
-     *
-     * @param successful
+     * Indicate to the user that the login operation has terminated.
+     * @param successful Whether the login was successful.
      */
     public void finishedRequest(boolean successful) {
         if (successful) {
-            // SHOW THE NEXT SCREEN (WHICH WE DON'T HAVE)
+            // TODO SHOW THE NEXT SCREEN (WHICH WE DON'T HAVE) and stop the request queue
         }
         else {
             showProgressBar(false);
@@ -65,7 +70,6 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
             textView.setVisibility(View.VISIBLE);
             textView.setText("Login unsuccessful. Try again.");
         }
-        requestQueue.stop();
     }
 
     @Override
@@ -100,7 +104,6 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.login, menu);
         return true;
