@@ -5,10 +5,12 @@ import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.thundercats.queuer.R;
+import com.thundercats.queuer.interfaces.RearrangementListener;
 import com.thundercats.queuer.models.Project;
 
 import java.util.ArrayList;
@@ -17,7 +19,7 @@ import java.util.ArrayList;
  * Adapter for project feed screen.
  * Created by kmchen1 on 1/15/14.
  */
-public class FeedAdapter implements ListAdapter {
+public class FeedAdapter extends BaseAdapter implements RearrangementListener {
 
     /** The list of projects/models. */
     private ArrayList<Project> projects = new ArrayList<Project>();
@@ -43,6 +45,16 @@ public class FeedAdapter implements ListAdapter {
         this.projects = projects;
     }
 
+    public void remove(int position) {
+        projects.remove(position);
+        notifyDataSetChanged();
+    }
+
+    public void insert(Project project, int position) {
+        projects.add(position, project);
+        notifyDataSetChanged();
+    }
+
     @Override
     public boolean areAllItemsEnabled() {
         // all items are enabled. no dividers.
@@ -52,16 +64,6 @@ public class FeedAdapter implements ListAdapter {
     @Override
     public boolean isEnabled(int i) {
         return false;
-    }
-
-    @Override
-    public void registerDataSetObserver(DataSetObserver dataSetObserver) {
-
-    }
-
-    @Override
-    public void unregisterDataSetObserver(DataSetObserver dataSetObserver) {
-
     }
 
     @Override
@@ -109,5 +111,24 @@ public class FeedAdapter implements ListAdapter {
     @Override
     public boolean isEmpty() {
         return projects.isEmpty();
+    }
+
+
+    @Override
+    public void onStartedRearranging() {
+
+    }
+
+    @Override
+    public void swapElements(int indexOne, int indexTwo) {
+        Project temp = getItem(indexOne);
+        projects.remove(indexOne);
+        projects.add(indexOne, getItem(indexTwo));
+        projects.add(indexTwo, temp);
+    }
+
+    @Override
+    public void onFinishedRearranging() {
+
     }
 }

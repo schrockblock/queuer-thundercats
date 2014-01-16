@@ -27,19 +27,6 @@ import java.net.URL;
 public class LoginActivity extends ActionBarActivity implements LoginManagerCallback {
 
     /**
-     * The cloud server URL.
-     */
-    private final String SERVER = "http://queuer-rndapp.rhcloud.com/api/v1/session";
-
-    /**
-     * Returns the cloud server URL.
-     * @return The cloud server URL.
-     */
-    public String getServer() {
-        return SERVER;
-    }
-
-    /**
      * Shows/hides the progress bar.
      * @param shown Whether or not the progress bar is shown.
      */
@@ -85,7 +72,7 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
             @Override
             public void onClick(View view) {
                 LoginManager manager = LoginManager.getInstance();
-                manager.setCallback(LoginActivity.this);
+                manager.setCallback(LoginActivity.this, LoginActivity.this);
                 try {
                     showProgressBar(true);
                     textView.setVisibility(View.VISIBLE);
