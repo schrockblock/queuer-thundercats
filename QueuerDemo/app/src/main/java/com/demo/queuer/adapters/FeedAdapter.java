@@ -5,9 +5,11 @@ import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.demo.queuer.interfaces.RearrangementListener;
 import com.demo.queuer.models.Project;
 import com.demo.queuer.R;
 
@@ -16,7 +18,7 @@ import java.util.ArrayList;
 /**
  * Created by eschrock on 1/15/14.
  */
-public class FeedAdapter implements ListAdapter {
+public class FeedAdapter extends BaseAdapter implements RearrangementListener{
     private Context context;
     private ArrayList<Project> projects = new ArrayList<Project>();
 
@@ -25,24 +27,14 @@ public class FeedAdapter implements ListAdapter {
         this.projects = projects;
     }
 
-    @Override
-    public boolean areAllItemsEnabled() {
-        return true;
+    public void remove(int position) {
+        projects.remove(position);
+        notifyDataSetChanged();
     }
 
-    @Override
-    public boolean isEnabled(int position) {
-        return false;
-    }
-
-    @Override
-    public void registerDataSetObserver(DataSetObserver observer) {
-
-    }
-
-    @Override
-    public void unregisterDataSetObserver(DataSetObserver observer) {
-
+    public void insert(Project project, int position){
+        projects.add(position, project);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -79,17 +71,29 @@ public class FeedAdapter implements ListAdapter {
     }
 
     @Override
-    public int getItemViewType(int position) {
-        return 0;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return 1;
-    }
-
-    @Override
     public boolean isEmpty() {
         return projects.isEmpty();
+    }
+
+    @Override
+    public void onStartedRearranging() {
+
+    }
+
+    @Override
+    public void swapElements(int indexOne, int indexTwo) {
+        Project temp1 = projects.get(indexOne);
+        Project temp2 = projects.get(indexTwo);
+
+        projects.remove(indexOne);
+        projects.add(indexOne, temp2);
+
+        projects.remove(indexTwo);
+        projects.add(indexTwo, temp1);
+    }
+
+    @Override
+    public void onFinishedRearranging() {
+
     }
 }
