@@ -5,13 +5,16 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.thundercats.queuer.GsonRequest;
 import com.thundercats.queuer.activities.LoginActivity;
 import com.thundercats.queuer.interfaces.LoginManagerCallback;
@@ -19,6 +22,7 @@ import com.thundercats.queuer.interfaces.LoginManagerCallback;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -101,7 +105,9 @@ public class LoginManager {
     private JSONObject createJSONObject(String username, String password) {
         JSONObject jsonObject = null;
         try {
-            jsonObject = new JSONObject(new Gson().toJson(new LoginAttempt(username, password)));
+            String json = new Gson().toJson(new LoginAttempt(username, password));
+            Log.d("LoginManager", json);
+            jsonObject = new JSONObject(json);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -160,8 +166,16 @@ public class LoginManager {
             // ADD TO REQUEST QUEUE
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, server, jsonObject, listener, errorListener) {
                 protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-                    // TODO
-                    return null;
+                    try {
+                        String json = new String(
+                                response.data, HttpHeaderParser.parseCharset(response.headers));
+                        return Response.success(
+                                new Gson().fromJson(json, new JSONObject()), HttpHeaderParser.parseCacheHeaders(response));
+                    } catch (UnsupportedEncodingException e) {
+                        return Response.error(new ParseError(e));
+                    } catch (JsonSyntaxException e) {
+                        return Response.error(new ParseError(e));
+                    }
                 }
             };
             // TODO think about a tag for requests - request.setTag("cats");
