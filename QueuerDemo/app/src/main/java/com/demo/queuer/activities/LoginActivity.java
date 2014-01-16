@@ -1,5 +1,6 @@
-package com.demo.queuer;
+package com.demo.queuer.activities;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -26,7 +27,7 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
             @Override
             public void onClick(View v) {
                 LoginManager manager = new LoginManager();
-                manager.setCallback(LoginActivity.this);
+                manager.setCallback(LoginActivity.this, LoginActivity.this);
                 try {
                     manager.login(user.getText().toString(), pass.getText().toString());
                 } catch (Exception e) {
@@ -35,9 +36,6 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
             }
         });
     }
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -66,6 +64,8 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
 
     @Override
     public void finishedRequest(boolean successful) {
-
+        if (successful){
+            startActivity(new Intent(this, FeedActivity.class));
+        }
     }
 }
