@@ -1,7 +1,9 @@
 package com.demo.queuer.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -51,7 +53,9 @@ public class FeedActivity extends ActionBarActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(FeedActivity.this, "Clicked on item " + adapter.getItem(position), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(FeedActivity.this, ProjectActivity.class);
+                intent.putExtra("project_id", (int)adapter.getItemId(position));
+                startActivity(intent);
             }
         });
 
