@@ -18,6 +18,7 @@ import com.thundercats.queuer.views.EnhancedListView;
 import java.util.ArrayList;
 
 /**
+ * The screen that displays all of the user's projects.
  * Created by kmchen1 on 1/19/14.
  */
 public class ProjectActivity extends ActionBarActivity {
