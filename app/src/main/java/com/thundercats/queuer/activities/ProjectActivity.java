@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import com.thundercats.queuer.R;
 import com.thundercats.queuer.adapters.ProjectAdapter;
 import com.thundercats.queuer.models.Task;
 import com.thundercats.queuer.views.EnhancedListView;
@@ -30,12 +31,12 @@ public class ProjectActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project);
 
-        project_id = getIntent().getIntExtra("project_id",-1);
+        project_id = getIntent().getIntExtra("project_id", -1);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Project " + project_id);
 
-        EnhancedListView listView = (EnhancedListView)findViewById(android.R.id.lv_tasks);
+        EnhancedListView listView = (EnhancedListView)findViewById(R.id.lv_tasks);
         adapter = new ProjectAdapter(this, tasks);
         listView.setAdapter(adapter);
 
@@ -62,7 +63,7 @@ public class ProjectActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(android.R.menu.project, menu);
+        getMenuInflater().inflate(R.menu.project, menu);
         return true;
     }
 
@@ -72,14 +73,14 @@ public class ProjectActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == android.R.id.action_add_task) {
+        if (id == R.id.action_add_task) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             // set title
             alertDialogBuilder.setTitle("New Task");
 
-            View layout = getLayoutInflater().inflate(android.R.layout.new_task, null);
+            View layout = getLayoutInflater().inflate(R.layout.new_task, null);
 
-            final EditText taskTitle = (EditText)layout.findViewById(android.R.id.task);
+            final EditText taskTitle = (EditText)layout.findViewById(R.id.task);
 
             // set dialog message
             alertDialogBuilder

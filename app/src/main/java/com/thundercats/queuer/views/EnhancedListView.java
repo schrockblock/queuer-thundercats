@@ -52,6 +52,8 @@ import com.nineoldandroids.animation.TypeEvaluator;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
+import com.thundercats.queuer.R;
+import com.thundercats.queuer.interfaces.RearrangementListener;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -12,4 +12,9 @@
     <string name="password_hint">password</string>
     <string name="username_hint">username or email</string>
 
+    <string name="undo">undo</string>
+    <string name="undo_all">undo all</string>
+    <string name="item_deleted">item deleted</string>
+    <string name="n_items_deleted">n items deleted</string>
+
 </resources>

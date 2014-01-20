@@ -81,7 +81,17 @@ public class LoginManager {
      * A class that Gson converts to Json, which is then wrapped in a JSONObject.
      */
     private class LoginAttempt {
-        private final String user, pass;
+        private final String user;
+        private final String pass;
+
+        public String getPass() {
+            return pass;
+        }
+
+        public String getUser() {
+            return user;
+        }
+
         private LoginAttempt(String user, String pass) {
             this.user = user;
             this.pass = pass;
