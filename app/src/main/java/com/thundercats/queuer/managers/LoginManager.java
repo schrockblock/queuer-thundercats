@@ -1,14 +1,11 @@
 package com.thundercats.queuer.managers;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
@@ -16,22 +13,14 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.thundercats.queuer.GsonRequest;
 import com.thundercats.queuer.QueuerApplication;
 import com.thundercats.queuer.R;
-import com.thundercats.queuer.activities.LoginActivity;
 import com.thundercats.queuer.interfaces.LoginManagerCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by kmchen1 on 1/7/14.

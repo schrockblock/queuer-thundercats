@@ -1,13 +1,14 @@
 package com.thundercats.queuer.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.thundercats.queuer.R;
 import com.thundercats.queuer.adapters.FeedAdapter;
+import com.thundercats.queuer.adapters.ProjectAdapter;
 import com.thundercats.queuer.models.Project;
 import com.thundercats.queuer.views.EnhancedListView;
 
@@ -45,6 +46,15 @@ public class FeedActivity extends ActionBarActivity {
                         adapter.insert(project, position);
                     }
                 };
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Intent intent = new Intent(FeedActivity.this, ProjectActivity.class);
+                intent.putExtra("project_id", adapter.getItemId(position));
+                startActivity(intent);
             }
         });
 

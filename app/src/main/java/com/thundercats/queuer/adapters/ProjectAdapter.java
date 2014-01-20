@@ -1,25 +1,28 @@
 package com.thundercats.queuer.adapters;
 
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.thundercats.queuer.R;
 import com.thundercats.queuer.interfaces.RearrangementListener;
 import com.thundercats.queuer.models.Project;
+import com.thundercats.queuer.models.Task;
 
 import java.util.ArrayList;
 
 /**
- * Created by kmchen1 on 1/17/14.
+ * Created by kmchen1 on 1/15/14.
  */
-public class FeedAdapter extends BaseAdapter implements RearrangementListener {
+public class ProjectAdapter extends BaseAdapter implements RearrangementListener {
 
-    /** The list of projects/models. */
-    private ArrayList<Project> projects = new ArrayList<Project>();
+    /** The list of Tasks. */
+    private ArrayList<Task> tasks = new ArrayList<Task>();
 
     /** */
     private Context context;
@@ -28,27 +31,27 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
      * Constructs a new ProjectAdapter.
      * @param context The new context.
      */
-    public FeedAdapter(Context context) {
+    public ProjectAdapter(Context context) {
         this.context = context;
     }
 
     /**
      * Constructs a new ProjectAdapter.
      * @param context The new context.
-     * @param projects The list of projects.
+     * @param tasks The list of tasks.
      */
-    public FeedAdapter(Context context, ArrayList<Project> projects) {
+    public ProjectAdapter(Context context, ArrayList<Task> tasks) {
         this.context = context;
-        this.projects = projects;
+        this.tasks = tasks;
     }
 
     public void remove(int position) {
-        projects.remove(position);
+        tasks.remove(position);
         notifyDataSetChanged();
     }
 
-    public void insert(Project project, int position) {
-        projects.add(position, project);
+    public void insert(Task task, int position) {
+        tasks.add(position, task);
         notifyDataSetChanged();
     }
 
@@ -65,12 +68,12 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
 
     @Override
     public int getCount() {
-        return projects.size();
+        return tasks.size();
     }
 
     @Override
-    public Project getItem(int i) {
-        return projects.get(i);
+    public Task getItem(int i) {
+        return tasks.get(i);
     }
 
     @Override
@@ -87,10 +90,9 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
     @Override
     public View getView(int i, View convertView, ViewGroup viewGroup) {
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.list_project, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.list_task, null);
         }
-        ((TextView) convertView.findViewById(R.id.tv_title)).setText(getItem(i).getTitle());
-        convertView.findViewById(R.id.ll_project).setBackgroundColor(getItem(i).getColor());
+        ((TextView) convertView.findViewById(R.id.tv_title)).setText(getItem(i).getName());
         return convertView;
     }
 
@@ -107,7 +109,7 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
 
     @Override
     public boolean isEmpty() {
-        return projects.isEmpty();
+        return tasks.isEmpty();
     }
 
 
@@ -118,17 +120,16 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
 
     @Override
     public void swapElements(int indexOne, int indexTwo) {
-        Project temp1 = getItem(indexOne);
-        Project temp2 = getItem(indexTwo);
-        projects.remove(indexOne);
-        projects.add(indexOne, temp2);
-        projects.remove(indexTwo);
-        projects.add(indexTwo, temp1);
+        Task temp1 = getItem(indexOne);
+        Task temp2 = getItem(indexTwo);
+        tasks.remove(indexOne);
+        tasks.add(indexOne, temp2);
+        tasks.remove(indexTwo);
+        tasks.add(indexTwo, temp1);
     }
 
     @Override
     public void onFinishedRearranging() {
 
     }
-
 }
