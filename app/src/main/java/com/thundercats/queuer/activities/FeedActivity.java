@@ -2,6 +2,7 @@ package com.thundercats.queuer.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,6 +27,9 @@ public class FeedActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Projects");
+
         ArrayList<Project> projects = new ArrayList<Project>(20);
         for (int i = 0; i < 20; i++) {
             projects.add(new Project(i, "Project " + i));
@@ -35,6 +39,9 @@ public class FeedActivity extends ActionBarActivity {
         adapter = new FeedAdapter(this, projects);
         listView.setAdapter(adapter);
 
+        /*
+        TODO When you dismiss a project, you are really dismissing the project's first task.
+         */
         listView.setDismissCallback(new EnhancedListView.OnDismissCallback() {
             @Override
             public EnhancedListView.Undoable onDismiss(EnhancedListView listView, final int position) {
@@ -60,7 +67,7 @@ public class FeedActivity extends ActionBarActivity {
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
                 return false;
             }
         });

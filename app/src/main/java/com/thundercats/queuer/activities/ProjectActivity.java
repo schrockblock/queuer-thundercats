@@ -18,26 +18,44 @@ import com.thundercats.queuer.views.EnhancedListView;
 import java.util.ArrayList;
 
 /**
- * The screen that displays all of the user's projects.
+ * The screen that displays all of the user's {@link com.thundercats.queuer.models.Task}s
+ * for a given {@link com.thundercats.queuer.models.Project}.
  * Created by kmchen1 on 1/19/14.
  */
 public class ProjectActivity extends ActionBarActivity {
 
+    /**
+     * The project's ID.
+     */
     private int project_id;
+
+    /**
+     * The list of tasks.
+     */
     private ArrayList<Task> tasks = new ArrayList<Task>();
+
+    /**
+     * The project's base adapter. A rearrangement listener. Controls the list of tasks.
+     */
     private ProjectAdapter adapter;
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project);
 
+        // Get the project ID from the Intent. IDs default to -1 if not provided.
         project_id = getIntent().getIntExtra("project_id", -1);
 
+        // Set the action bar to display the project number.
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Project " + project_id);
 
-        EnhancedListView listView = (EnhancedListView)findViewById(R.id.lv_tasks);
+        EnhancedListView listView = (EnhancedListView) findViewById(R.id.lv_tasks);
         adapter = new ProjectAdapter(this, tasks);
         listView.setAdapter(adapter);
 

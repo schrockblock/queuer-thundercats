@@ -17,11 +17,14 @@ import com.thundercats.queuer.models.Task;
 import java.util.ArrayList;
 
 /**
+ * A {@link com.thundercats.queuer.interfaces.RearrangementListener} that controls the list of
+ * {@link com.thundercats.queuer.models.Task}s in the current
+ * {@link com.thundercats.queuer.models.Project}.
  * Created by kmchen1 on 1/15/14.
  */
 public class ProjectAdapter extends BaseAdapter implements RearrangementListener {
 
-    /** The list of Tasks. */
+    /** The list of {@code Task}s. */
     private ArrayList<Task> tasks = new ArrayList<Task>();
 
     /** */

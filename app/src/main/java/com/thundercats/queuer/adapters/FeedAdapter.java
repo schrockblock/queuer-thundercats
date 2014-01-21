@@ -18,7 +18,10 @@ import java.util.ArrayList;
  */
 public class FeedAdapter extends BaseAdapter implements RearrangementListener {
 
-    /** The list of projects/models. */
+    /** The list of visible projects. */
+    private ArrayList<Project> visibleProjects = new ArrayList<Project>();
+
+    /** The list of total projects. */
     private ArrayList<Project> projects = new ArrayList<Project>();
 
     /** */
@@ -40,15 +43,30 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
     public FeedAdapter(Context context, ArrayList<Project> projects) {
         this.context = context;
         this.projects = projects;
+        // All projects are visible to begin with
+        this.visibleProjects = projects;
+    }
+
+    /**
+     * The data set has changed. Rebuild the view with new data set.
+     */
+    @Override
+    public void notifyDataSetChanged() {
+        for (Project project : projects) {
+            if (project.isHidden()) {
+                visibleProjects.remove(project);
+            }
+        }
+        super.notifyDataSetChanged();
     }
 
     public void remove(int position) {
-        projects.remove(position);
+        visibleProjects.remove(position);
         notifyDataSetChanged();
     }
 
     public void insert(Project project, int position) {
-        projects.add(position, project);
+        visibleProjects.add(position, project);
         notifyDataSetChanged();
     }
 
@@ -65,12 +83,12 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
 
     @Override
     public int getCount() {
-        return projects.size();
+        return visibleProjects.size();
     }
 
     @Override
     public Project getItem(int i) {
-        return projects.get(i);
+        return visibleProjects.get(i);
     }
 
     @Override
@@ -107,7 +125,7 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
 
     @Override
     public boolean isEmpty() {
-        return projects.isEmpty();
+        return visibleProjects.isEmpty();
     }
 
 
@@ -120,10 +138,10 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
     public void swapElements(int indexOne, int indexTwo) {
         Project temp1 = getItem(indexOne);
         Project temp2 = getItem(indexTwo);
-        projects.remove(indexOne);
-        projects.add(indexOne, temp2);
-        projects.remove(indexTwo);
-        projects.add(indexTwo, temp1);
+        visibleProjects.remove(indexOne);
+        visibleProjects.add(indexOne, temp2);
+        visibleProjects.remove(indexTwo);
+        visibleProjects.add(indexTwo, temp1);
     }
 
     @Override

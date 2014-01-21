@@ -9,6 +9,7 @@
         android:targetSdkVersion="19" />
 
     <application
+        android:debuggable="true"
         android:name=".QueuerApplication"
         android:allowBackup="true"
         android:icon="@drawable/icon_autobots"

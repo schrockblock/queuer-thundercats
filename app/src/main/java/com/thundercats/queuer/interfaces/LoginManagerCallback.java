@@ -1,7 +1,7 @@
 package com.thundercats.queuer.interfaces;
 
 /**
- * <p>A callback class to indicate to the user that a request has started or finished.</p>
+ * A callback class to indicate to the user that a request has started or finished.
  * Created by kmchen1 on 1/7/14.
  */
 public interface LoginManagerCallback {

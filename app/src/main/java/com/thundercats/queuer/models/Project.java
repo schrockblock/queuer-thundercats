@@ -1,13 +1,20 @@
 package com.thundercats.queuer.models;
 
+import java.io.Serializable;
+
 /**
  * A view (a project) that appears in the ListView of projects.
  * Created by kmchen1 on 1/15/14.
  */
-public class Project {
+public class Project implements Serializable {
 
     /**
-     * This project's ID. Useful since users can move projects around.
+     * Whether this project is hidden.
+     */
+    private boolean isHidden;
+
+    /**
+     * This project's unique ID. Useful since users can move projects around.
      */
     private int id;
 
@@ -77,5 +84,23 @@ public class Project {
      */
     public void setColor(int color) {
         this.color = color;
+    }
+
+    public boolean isHidden() {
+        return isHidden;
+    }
+
+    public void setHidden(boolean isHidden) {
+        this.isHidden = isHidden;
+    }
+
+    /**
+     * Returns true if the projects are equal (i.e., if their unique IDs are equal).
+     * @param otherProject The other project
+     * @return True if the projects have equal IDs.
+     */
+    @Override
+    public boolean equals(Object otherProject) {
+        return ((Project) otherProject).getId() == getId();
     }
 }
