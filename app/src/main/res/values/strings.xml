@@ -16,5 +16,8 @@
     <string name="undo_all">undo all</string>
     <string name="item_deleted">item deleted</string>
     <string name="n_items_deleted">n items deleted</string>
+    <string name="change_color">changecolor</string>
+    <string name="choose_a_color">Choose a Color</string>
+
 
 </resources>

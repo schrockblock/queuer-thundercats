@@ -9,5 +9,9 @@
         android:title="@string/action_add_task"
         android:orderInCategory="100"
         app:showAsAction="ifRoom" />
+    <item android:id="@+id/action_change_color"
+        android:title="@string/change_color"
+        android:orderInCategory="99"
+        app:showAsAction="ifRoom" />
 
 </menu>

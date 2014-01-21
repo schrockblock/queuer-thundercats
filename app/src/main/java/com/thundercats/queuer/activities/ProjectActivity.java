@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.thundercats.queuer.R;
 import com.thundercats.queuer.adapters.ProjectAdapter;
@@ -23,6 +25,8 @@ import java.util.ArrayList;
  * Created by kmchen1 on 1/19/14.
  */
 public class ProjectActivity extends ActionBarActivity {
+
+    private Project project;
 
     /**
      * The project's ID.
@@ -39,6 +43,15 @@ public class ProjectActivity extends ActionBarActivity {
      */
     private ProjectAdapter adapter;
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater;
+        inflater = getMenuInflater();
+        inflater.inflate(R.menu.project, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
     /**
      *
      * @param savedInstanceState
@@ -51,9 +64,13 @@ public class ProjectActivity extends ActionBarActivity {
         // Get the project ID from the Intent. IDs default to -1 if not provided.
         project_id = getIntent().getIntExtra("project_id", -1);
 
+        project = getIntent().get;
+
         // Set the action bar to display the project number.
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Project " + project_id);
+
+
 
         EnhancedListView listView = (EnhancedListView) findViewById(R.id.lv_tasks);
         adapter = new ProjectAdapter(this, tasks);
@@ -75,15 +92,6 @@ public class ProjectActivity extends ActionBarActivity {
 
         listView.enableSwipeToDismiss();
         listView.enableRearranging();
-    }
-
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.project, menu);
-        return true;
     }
 
     @Override
@@ -123,6 +131,44 @@ public class ProjectActivity extends ActionBarActivity {
             alertDialog.show();
             return true;
         }
+        else if (id == R.id.action_change_color) {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+                alertDialogBuilder.setTitle("Change Colors");
+
+                View layout = getLayoutInflater().inflate(R.layout.change_colors, null);
+
+
+
+                Spinner spinner = (Spinner)findViewById(R.id.spinner_change_color);
+
+                 alertDialogBuilder
+                    //.setMessage(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)))
+                    .setCancelable(true)
+                    .setView(layout)
+                    .setPositiveButton("Ok",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    String color = spinner.getSelectedItem().toString();
+
+                                    task.setProject_id(project_id);
+                                    tasks.add(0, task);
+                                    adapter.notifyDataSetChanged();
+                                }
+                            })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog,int id) {}
+                    });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+            return true;
+
+
+
+
+
+        }
+
         return super.onOptionsItemSelected(item);
     }
 }

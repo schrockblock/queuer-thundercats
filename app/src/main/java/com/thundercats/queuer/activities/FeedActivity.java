@@ -61,6 +61,7 @@ public class FeedActivity extends ActionBarActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Intent intent = new Intent(FeedActivity.this, ProjectActivity.class);
                 intent.putExtra("project_id", adapter.getItemId(position));
+                intent.putExtra("project", adapter.getItem(position));
                 startActivity(intent);
             }
         });

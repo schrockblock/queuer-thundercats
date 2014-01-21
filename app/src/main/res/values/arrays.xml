@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="color_array">
+        <item>Blue</item>
+        <item>Black</item>
+        <item>Red</item>
+        <item>White</item>
+        <item>Green</item>
+        <item>Purple</item>
+        <item>Yellow</item>
+        <item>Orange</item>
+        <item>Violet</item>
+        <item>Silver</item>
+        <item>Gold</item>
+        <item>Gray</item>
+        <item>Pink</item>
+        <item>Fuchsia</item>
+        <item>Lt Blue</item>
+        <item>Sky Blue</item>
+        <item>Aqua</item>
+        <item>Khaki</item>
+    </string-array>
+
+</resources>
