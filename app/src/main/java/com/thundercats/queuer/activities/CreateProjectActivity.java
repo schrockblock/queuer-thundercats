@@ -32,7 +32,9 @@ public class CreateProjectActivity extends ActionBarActivity {
     }
 
     /**
-     * Checks to see textfields are not blank, creates new project, and takes user back to FeedActivity.
+     * The user has pressed the Okay button.
+     * First checks to see EditText widgets are not blank.
+     * Then creates a new project and takes the user back to FeedActivity.
      * @param view
      */
     public void okayButtonPressed(View view) {
@@ -59,8 +61,7 @@ public class CreateProjectActivity extends ActionBarActivity {
 
         // Set intent with data
         Intent result = new Intent();
-        result.putExtra(Project.INTENT_KEY_FOR_PROJECT_NAME, projectName);
-        result.putExtra(Project.INTENT_KEY_FOR_PROJECT_COLOR, projectColor);
+        result.putExtra(Project.INTENT_KEY, new Project(id, projectName, projectColor));
         setResult(RESULT_OK, result);
         finish();
     }

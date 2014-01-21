@@ -31,28 +31,23 @@ public class FeedActivity extends ActionBarActivity {
      * @param requestCode
      * @param resultCode Either {@link android.app.Activity#RESULT_OK} or
      *                      {@link android.app.Activity#RESULT_CANCELED}.
-     * @param data
+     * @param intentResult
      */
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent intentResult) {
         if (requestCode == CREATE_PROJECT_REQUEST) {
             if (resultCode == RESULT_OK) {
-                String projectName = data.getStringExtra(Project.INTENT_KEY_FOR_PROJECT_NAME);
-                String color = data.getStringExtra(Project.INTENT_KEY_FOR_PROJECT_COLOR);
-                Integer projectColor = null;
-                try {
-                    projectColor = Integer.parseInt(color, 16);
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
-                // TODO waiting for color spinner
-                adapter.add(new Project(adapter.getNextID(), projectName, projectColor));
+                Bundle data = intentResult.getExtras();
+                Project project = (Project) data.getParcelable(Project.INTENT_KEY);
+                adapter.add(project);
             }
         }
     }
 
     /**
      * Handles presses on action bar items.
-     * @param item The item selected.
+     * Calls a switch statement on all ids in the menu that was set in
+     * {@link com.thundercats.queuer.activities.FeedActivity#onCreateOptionsMenu(android.view.Menu)}.
+     * @param item The selected item.
      * @return True since an item was selected.
      */
     @Override
@@ -82,6 +77,10 @@ public class FeedActivity extends ActionBarActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * What happens when this activity is created.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

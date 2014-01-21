@@ -1,6 +1,8 @@
 package com.thundercats.queuer.models;
 
 import android.content.Intent;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.io.Serializable;
 
@@ -8,19 +10,28 @@ import java.io.Serializable;
  * A view (a project) that appears in the ListView of projects.
  * Created by kmchen1 on 1/15/14.
  */
-public class Project implements Serializable {
+public class Project implements Parcelable {
 
     /**
-     * The key for a project's name. Called in {@link Intent#putExtra(String, String)}
-     * for when a new screen/activity is expected to return an intent as a result.
+     * The Creator creates Project arrays and Projects from Parcels.
      */
-    public static final String INTENT_KEY_FOR_PROJECT_NAME = "name";
+    public static final Parcelable.Creator<Project> CREATOR =
+            new Parcelable.Creator<Project>() {
+                @Override
+                public Project createFromParcel(Parcel parcel) {
+                    return new Project(parcel);
+                }
+
+                @Override
+                public Project[] newArray(int size) {
+                    return new Project[size];
+                }
+            };
 
     /**
-     * The key for a project's color. Called in {@link Intent#putExtra(String, String)}
-     * for when a new screen/activity is expected to return an intent as a result.
+     * The key for storing {@code Project}s as {@code Intent} extras.
      */
-    public static final String INTENT_KEY_FOR_PROJECT_COLOR = "color";
+    public static final String INTENT_KEY = "project";
 
     /**
      * Whether this project is hidden.
@@ -44,7 +55,8 @@ public class Project implements Serializable {
 
     /**
      * Constructs a new Project.
-     * @param id This project's ID.
+     *
+     * @param id    This project's ID.
      * @param title This project's title.
      */
     public Project(int id, String title) {
@@ -54,7 +66,8 @@ public class Project implements Serializable {
 
     /**
      * Constructs a new Project.
-     * @param id This project's ID.
+     *
+     * @param id    This project's ID.
      * @param title This project's title.
      * @param color This project's color.
      */
@@ -66,6 +79,7 @@ public class Project implements Serializable {
 
     /**
      * Returns this project's ID.
+     *
      * @return This project's ID.
      */
     public int getId() {
@@ -74,6 +88,7 @@ public class Project implements Serializable {
 
     /**
      * Sets this project's ID.
+     *
      * @param id The new ID.
      */
     public void setId(int id) {
@@ -82,6 +97,7 @@ public class Project implements Serializable {
 
     /**
      * Returns this project's title.
+     *
      * @return This project's title.
      */
     public String getTitle() {
@@ -90,6 +106,7 @@ public class Project implements Serializable {
 
     /**
      * Sets this project's title.
+     *
      * @param title The new title.
      */
     public void setTitle(String title) {
@@ -98,6 +115,7 @@ public class Project implements Serializable {
 
     /**
      * Returns this project's color.
+     *
      * @return This project's color.
      */
     public int getColor() {
@@ -106,6 +124,7 @@ public class Project implements Serializable {
 
     /**
      * Sets this project's color.
+     *
      * @param color The new color.
      */
     public void setColor(int color) {
@@ -122,6 +141,7 @@ public class Project implements Serializable {
 
     /**
      * Returns true if the projects are equal (i.e., if their unique IDs are equal).
+     *
      * @param otherProject The other project
      * @return True if the projects have equal IDs.
      */
@@ -129,4 +149,45 @@ public class Project implements Serializable {
     public boolean equals(Object otherProject) {
         return ((Project) otherProject).getId() == getId();
     }
+
+    /**
+     * Describe the kinds of special objects contained
+     * in this Parcelable's marshalled representation.
+     *
+     * @return a bitmask indicating the set of special
+     * object types marshalled by the Parcelable.
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * Flatten this object in to a Parcel.
+     *
+     * @param parcel The Parcel in which the object should be written.
+     * @param i      Additional flags about how the object should be written.
+     */
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(title);
+        parcel.writeInt(color);
+        parcel.writeInt(isHidden ? 1 : 0);
+    }
+
+    /**
+     * The constructor used to create a Project from a Parcel.
+     * Reads back fields IN THE ORDER they were written.
+     *
+     * @param in The Parcel to create this Project from.
+     * @see com.thundercats.queuer.models.Project#CREATOR
+     */
+    public Project(Parcel in) {
+        id = in.readInt();
+        title = in.readString();
+        color = in.readInt();
+        isHidden = (in.readInt() == 1);
+    }
+
 }
