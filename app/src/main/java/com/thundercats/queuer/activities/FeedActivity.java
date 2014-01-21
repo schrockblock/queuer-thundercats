@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.thundercats.queuer.R;
 import com.thundercats.queuer.adapters.FeedAdapter;
@@ -38,6 +39,7 @@ public class FeedActivity extends ActionBarActivity {
         listView.setDismissCallback(new EnhancedListView.OnDismissCallback() {
             @Override
             public EnhancedListView.Undoable onDismiss(EnhancedListView listView, final int position) {
+                Toast.makeText(FeedActivity.this, "Clicked on item " + adapter.getItem(position), Toast.LENGTH_SHORT).show();
                 final Project project = adapter.getItem(position);
                 adapter.remove(position);
                 return new EnhancedListView.Undoable() {
@@ -49,21 +51,20 @@ public class FeedActivity extends ActionBarActivity {
             }
         });
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Intent intent = new Intent(FeedActivity.this, ProjectActivity.class);
-                intent.putExtra("project_id", adapter.getItemId(position));
-                startActivity(intent);
-            }
-        });
 
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                return false;
-            }
-        });
+         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+             @Override
+             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                 Intent intent = new Intent(FeedActivity.this, ProjectActivity.class);
+                 intent.putExtra("project_id", adapter.getItemId(position));
+                 startActivity(intent);
+             }
+         });
+
+
+
+
+
 
         listView.enableSwipeToDismiss();
         listView.enableRearranging();
