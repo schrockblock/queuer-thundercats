@@ -9,5 +9,6 @@
     <string name="undo_all">Undo All</string>
     <string name="item_deleted">Item deleted</string>
     <string name="n_items_deleted">%1$s items deleted</string>
+    <string name="remember_me">Remember me</string>
 
 </resources>

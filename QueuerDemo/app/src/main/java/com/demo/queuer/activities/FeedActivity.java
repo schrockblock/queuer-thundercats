@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.demo.queuer.R;
 import com.demo.queuer.adapters.FeedAdapter;
+import com.demo.queuer.database.ProjectDataSource;
 import com.demo.queuer.models.Project;
 import com.demo.queuer.views.EnhancedListView;
 
@@ -29,8 +30,13 @@ public class FeedActivity extends ActionBarActivity {
 
         ArrayList<Project> projects = new ArrayList<Project>(20);
         for (int i = 0; i < 20; i++){
-            projects.add(new Project(i, "Project " + i));
+            new Project(this, i, "Project " + i);
         }
+
+        ProjectDataSource projectDataSource = new ProjectDataSource(this);
+        projectDataSource.open();
+        projects = projectDataSource.getAllProjects();
+        projectDataSource.close();
 
         EnhancedListView listView = (EnhancedListView)findViewById(R.id.lv_projects);
         adapter = new FeedAdapter(this, projects);
