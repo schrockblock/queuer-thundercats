@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.demo.queuer.R;
 import com.demo.queuer.interfaces.RearrangementListener;
 import com.demo.queuer.models.Task;
-import com.demo.queuer.models.Task;
 
 import java.util.ArrayList;
 
@@ -48,7 +47,7 @@ public class ProjectAdapter extends BaseAdapter implements RearrangementListener
 
     @Override
     public long getItemId(int position) {
-        return getItem(position).getId();
+        return getItem(position).getLocalId();
     }
 
     @Override
