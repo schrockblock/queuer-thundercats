@@ -38,7 +38,7 @@ public class FeedActivity extends ActionBarActivity {
             if (resultCode == RESULT_OK) {
                 String projectName = data.getStringExtra(Project.INTENT_KEY_FOR_PROJECT_NAME);
                 String color = data.getStringExtra(Project.INTENT_KEY_FOR_PROJECT_COLOR);
-                int projectColor;
+                // TODO waiting for color spinner
                 adapter.add(new Project(adapter.getNextID(), projectName, projectColor));
             }
         }

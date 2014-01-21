@@ -18,10 +18,14 @@ import java.util.ArrayList;
  */
 public class FeedAdapter extends BaseAdapter implements RearrangementListener {
 
-    /** The list of visible projects. */
+    /**
+     * The list of visible projects.
+     */
     private ArrayList<Project> visibleProjects = new ArrayList<Project>();
 
-    /** The list of total projects. */
+    /**
+     * The list of total projects.
+     */
     private ArrayList<Project> projects = new ArrayList<Project>();
 
     /** */
@@ -29,6 +33,7 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
 
     /**
      * Constructs a new ProjectAdapter.
+     *
      * @param context The new context.
      */
     public FeedAdapter(Context context) {
@@ -37,7 +42,8 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
 
     /**
      * Constructs a new ProjectAdapter.
-     * @param context The new context.
+     *
+     * @param context  The new context.
      * @param projects The list of projects.
      */
     public FeedAdapter(Context context, ArrayList<Project> projects) {
@@ -49,6 +55,7 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
 
     /**
      * Returns the next available unique project ID.
+     *
      * @return Since projects cannot be deleted, the next available (zero-indexed)
      * unique project ID will be the number of total projects.
      */
@@ -57,29 +64,69 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
     }
 
     /**
-     * The data set has changed. Rebuild the view with new data set.
+     * Removes all hidden projects from the list of visible projects.
      */
-    @Override
-    public void notifyDataSetChanged() {
+    private void refreshVisibleProjects() {
         for (Project project : projects) {
             if (project.isHidden()) {
                 visibleProjects.remove(project);
             }
         }
+    }
+
+    /**
+     * Refreshes the visible projects.
+     */
+    @Override
+    public void notifyDataSetChanged() {
+        refreshVisibleProjects();
         super.notifyDataSetChanged();
     }
 
+    /**
+     * Removes a project from the list of visible projects.
+     * <p/>
+     * For now, projects cannot be removed from the list of total projects.
+     *
+     * @param position The project to remove will be at index {@code position}
+     *                 in the list of visible projects.
+     */
     public void remove(int position) {
         visibleProjects.remove(position);
         notifyDataSetChanged();
     }
 
+    /**
+     * Adds/appends a given project to the lists of visible projects and of projects,
+     * provided the given project is not contained in said lists.
+     *
+     * @param project The project to add.
+     */
     public void add(Project project) {
-        insert(project, );
+        if (!visibleProjects.contains(project)) visibleProjects.add(project);
+        if (!projects.contains(project)) projects.add(project);
+        notifyDataSetChanged();
     }
 
+    /**
+     * Inserts a given project at a given position.
+     *
+     * @param project  The project to insert.
+     * @param position The position where the project will be inserted.
+     *                 All projects to the right of position will be
+     *                 shifted to the right.
+     *                 <p/>
+     *                 Since the ordering of the list of total projects
+     *                 is preserved, {@code project} is simply appended
+     *                 to the list of total projects.
+     */
     public void insert(Project project, int position) {
-        visibleProjects.add(position, project);
+        if (position < 0 || position > visibleProjects.size())
+            throw new IndexOutOfBoundsException("Cannot insert position " + position
+                    + " when size is " + visibleProjects.size());
+        if (!visibleProjects.contains(project)) visibleProjects.add(position, project);
+        // ArrayList#add(int) is called (to preserve order) instead of ArrayList#add(int,int)
+        if (!projects.contains(project)) projects.add(project);
         notifyDataSetChanged();
     }
 
@@ -89,9 +136,13 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
         return true;
     }
 
+    /**
+     * @param i
+     * @return
+     */
     @Override
     public boolean isEnabled(int i) {
-        return false;
+        return true;
     }
 
     @Override
@@ -109,19 +160,33 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
         return getItem(i).getId();
     }
 
+    /**
+     * Returns true since IDs are stable (i.e., the user can move projecs around).
+     *
+     * @return True since IDs are stable (i.e., the user can move projecs around).
+     */
     @Override
     public boolean hasStableIds() {
-        // has stable ids, since we can move projects/views around
         return true;
     }
 
+    /**
+     * Returns the TextView widget containing text and a background color.
+     *
+     * @param position    The position of the project whose view we want to create.
+     * @param convertView The view that will hold the list of projects.
+     * @param viewGroup   Never used.
+     * @return The TextView widget containing text and a background color.
+     */
     @Override
-    public View getView(int i, View convertView, ViewGroup viewGroup) {
+    public View getView(int position, View convertView, ViewGroup viewGroup) {
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.list_project, null);
         }
-        ((TextView) convertView.findViewById(R.id.tv_title)).setText(getItem(i).getTitle());
-        convertView.findViewById(R.id.ll_project).setBackgroundColor(getItem(i).getColor());
+        // set the text of the TextView widget
+        ((TextView) convertView.findViewById(R.id.tv_title)).setText(getItem(position).getTitle());
+        // set the background color of the LinearLayout
+        convertView.findViewById(R.id.ll_project).setBackgroundColor(getItem(position).getColor());
         return convertView;
     }
 
@@ -130,23 +195,44 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
         return 0;
     }
 
+    /**
+     * Returns 1 since there are no dividers (i.e., there is only 1 type of view).
+     *
+     * @return 1 since there are no dividers (i.e., there is only 1 type of view).
+     */
     @Override
     public int getViewTypeCount() {
-        // no dividers. only 1 type of view.
         return 1;
     }
 
+    /**
+     * Returns true if there are no visible projects.
+     *
+     * @return True if the list of visible projects is empty, false otherwise.
+     */
     @Override
     public boolean isEmpty() {
         return visibleProjects.isEmpty();
     }
 
 
+    /**
+     * @see com.thundercats.queuer.interfaces.RearrangementListener#onStartedRearranging()
+     */
     @Override
     public void onStartedRearranging() {
 
     }
 
+    /**
+     * Swapping elements only affects the list of visible projects.
+     * <p/>
+     * The list of total projects is unaffected, as it preserves the order of project IDs.
+     *
+     * @param indexOne
+     * @param indexTwo
+     * @see com.thundercats.queuer.interfaces.RearrangementListener#swapElements(int, int)
+     */
     @Override
     public void swapElements(int indexOne, int indexTwo) {
         Project temp1 = getItem(indexOne);
@@ -157,6 +243,9 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
         visibleProjects.add(indexTwo, temp1);
     }
 
+    /**
+     * @see com.thundercats.queuer.interfaces.RearrangementListener#onFinishedRearranging()
+     */
     @Override
     public void onFinishedRearranging() {
 
