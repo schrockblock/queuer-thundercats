@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 
 import com.thundercats.queuer.R;
@@ -37,7 +38,7 @@ public class ProjectActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Project " + project_id);
 
-        EnhancedListView listView = (EnhancedListView)findViewById(R.id.lv_tasks);
+        EnhancedListView listView = (EnhancedListView) findViewById(R.id.lv_tasks);
         adapter = new ProjectAdapter(this, tasks);
         listView.setAdapter(adapter);
 
@@ -55,10 +56,17 @@ public class ProjectActivity extends ActionBarActivity {
             }
         });
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final Task task = adapter.getItem(position);
+                createTask(task);
+            }
+        });
+
         listView.enableSwipeToDismiss();
         listView.enableRearranging();
     }
-
 
 
     @Override
@@ -74,37 +82,83 @@ public class ProjectActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_add_task) {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-            // set title
-            alertDialogBuilder.setTitle("New Task");
-
-            View layout = getLayoutInflater().inflate(R.layout.new_task, null);
-
-            final EditText taskTitle = (EditText)layout.findViewById(R.id.task);
-
-            // set dialog message
-            alertDialogBuilder
-                    //.setMessage(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)))
-                    .setCancelable(true)
-                    .setView(layout)
-                    .setPositiveButton("Ok",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    Task task = new Task();
-                                    task.setName(taskTitle.getText().toString());
-                                    task.setProject_id(project_id);
-                                    tasks.add(0, task);
-                                    adapter.notifyDataSetChanged();
-                                }
-                            })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,int id) {}
-                    });
-            AlertDialog alertDialog = alertDialogBuilder.create();
-            alertDialog.show();
-            return true;
-        }
+        if (id == R.id.action_add_task) createTask();
         return super.onOptionsItemSelected(item);
     }
+
+
+    public void createTask() {
+
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        // set title
+        alertDialogBuilder.setTitle("New Task");
+
+        View layout = getLayoutInflater().inflate(R.layout.new_task, null);
+
+        final EditText taskTitle = (EditText) layout.findViewById(R.id.task);
+
+        // set dialog message
+        alertDialogBuilder
+                //.setMessage(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)))
+                .setCancelable(true)
+                .setView(layout)
+                .setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Task task = new Task();
+                                task.setName(taskTitle.getText().toString());
+                                task.setProject_id(project_id);
+                                tasks.add(0, task);
+                                adapter.notifyDataSetChanged();
+                            }
+                        })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+        return;
+    }
+
+    public void createTask(Task task) {
+        if (task == null) throw new IllegalArgumentException("Null task");
+        final Task editTask = task;
+        final String name = task.getName();
+        final int id = task.getId();
+
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        // set title
+        alertDialogBuilder.setTitle(name);
+
+        View layout = getLayoutInflater().inflate(R.layout.new_task, null);
+
+        final EditText taskTitle = (EditText) layout.findViewById(R.id.task);
+        if (!name.equals("New Task")) taskTitle.setText(name);
+
+        // set dialog message
+        alertDialogBuilder
+                //.setMessage(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)))
+                .setCancelable(true)
+                .setView(layout)
+                .setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                editTask.setName(taskTitle.getText().toString());
+                                editTask.setProject_id(project_id);
+                                tasks.set(tasks.indexOf(editTask), editTask);
+                                adapter.notifyDataSetChanged();
+                            }
+                        })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+        return;
+    }
+
 }

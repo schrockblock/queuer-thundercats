@@ -63,7 +63,7 @@ public class ProjectAdapter extends BaseAdapter implements RearrangementListener
 
     @Override
     public boolean isEnabled(int i) {
-        return false;
+        return true;
     }
 
     @Override

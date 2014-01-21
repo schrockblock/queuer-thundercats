@@ -70,12 +70,16 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
 
     @Override
     public Project getItem(int i) {
+        if (i < 0 || i >= projects.size())
+            return null;
         return projects.get(i);
     }
 
     @Override
     public long getItemId(int i) {
-        return getItem(i).getId();
+        Project project = getItem(i);
+        if (project == null) return -1;
+        return project.getId();
     }
 
     @Override

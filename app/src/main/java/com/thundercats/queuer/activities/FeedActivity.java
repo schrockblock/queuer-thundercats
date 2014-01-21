@@ -52,7 +52,7 @@ public class FeedActivity extends ActionBarActivity {
         });
 
 
-         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
              @Override
              public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                  Intent intent = new Intent(FeedActivity.this, ProjectActivity.class);
