@@ -86,11 +86,13 @@ public class ProjectActivity extends ActionBarActivity {
         return true;
     }
 
+    /**
+     * Handles action bar item clicks.
+     * @param item The item selected.
+     * @return True, since an item was selected.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_add_task) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);

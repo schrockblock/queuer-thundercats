@@ -48,6 +48,15 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
     }
 
     /**
+     * Returns the next available unique project ID.
+     * @return Since projects cannot be deleted, the next available (zero-indexed)
+     * unique project ID will be the number of total projects.
+     */
+    public int getNextID() {
+        return projects.size();
+    }
+
+    /**
      * The data set has changed. Rebuild the view with new data set.
      */
     @Override
@@ -63,6 +72,10 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
     public void remove(int position) {
         visibleProjects.remove(position);
         notifyDataSetChanged();
+    }
+
+    public void add(Project project) {
+        insert(project, );
     }
 
     public void insert(Project project, int position) {

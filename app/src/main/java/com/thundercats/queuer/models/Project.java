@@ -1,5 +1,7 @@
 package com.thundercats.queuer.models;
 
+import android.content.Intent;
+
 import java.io.Serializable;
 
 /**
@@ -7,6 +9,18 @@ import java.io.Serializable;
  * Created by kmchen1 on 1/15/14.
  */
 public class Project implements Serializable {
+
+    /**
+     * The key for a project's name. Called in {@link Intent#putExtra(String, String)}
+     * for when a new screen/activity is expected to return an intent as a result.
+     */
+    public static final String INTENT_KEY_FOR_PROJECT_NAME = "name";
+
+    /**
+     * The key for a project's color. Called in {@link Intent#putExtra(String, String)}
+     * for when a new screen/activity is expected to return an intent as a result.
+     */
+    public static final String INTENT_KEY_FOR_PROJECT_COLOR = "color";
 
     /**
      * Whether this project is hidden.
@@ -36,6 +50,18 @@ public class Project implements Serializable {
     public Project(int id, String title) {
         this.id = id;
         this.title = title;
+    }
+
+    /**
+     * Constructs a new Project.
+     * @param id This project's ID.
+     * @param title This project's title.
+     * @param color This project's color.
+     */
+    public Project(int id, String title, int color) {
+        this.id = id;
+        this.title = title;
+        this.color = color;
     }
 
     /**
