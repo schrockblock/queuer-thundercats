@@ -125,13 +125,6 @@ public class FeedActivity extends ActionBarActivity {
             }
         });
 
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
-                return false;
-            }
-        });
-
         listView.enableSwipeToDismiss();
         listView.enableRearranging();
     }
