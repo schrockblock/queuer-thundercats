@@ -1,6 +1,8 @@
 package com.thundercats.queuer.adapters;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +18,35 @@ import java.util.ArrayList;
 /**
  * Created by kmchen1 on 1/17/14.
  */
-public class FeedAdapter extends BaseAdapter implements RearrangementListener {
+public class FeedAdapter extends BaseAdapter implements RearrangementListener, Parcelable {
+
+    public static final Parcelable.Creator<FeedAdapter> CREATOR =
+            new Parcelable.Creator<FeedAdapter>() {
+                @Override
+                public FeedAdapter createFromParcel(Parcel parcel) {
+                    return new FeedAdapter(parcel);
+                }
+
+                @Override
+                public FeedAdapter[] newArray(int size) {
+                    return new FeedAdapter[size];
+                }
+            };
+
+    /**
+     * The recreation/unmarshalling constructor.
+     *
+     * @param in The parcel which is used to recreate this FeedAdapter.
+     */
+    public FeedAdapter(Parcel in) {
+        in.readTypedList(visibleProjects, Project.CREATOR);
+        in.readTypedList(projects, Project.CREATOR);
+    }
+
+    /**
+     * The key for storing {@code FeedAdapter}s as {@code Intent} extras.
+     */
+    public static final String INTENT_KEY = "feed_adapter";
 
     /**
      * The list of visible projects.
@@ -251,4 +281,13 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
 
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
+    }
 }

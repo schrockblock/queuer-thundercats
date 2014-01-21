@@ -28,10 +28,12 @@ public class FeedActivity extends ActionBarActivity {
 
     /**
      *
-     * @param requestCode
+     * @param requestCode The request code that is attached to the Intent that launches the
+     *                    {@link com.thundercats.queuer.activities.CreateProjectActivity}.
+     *                    @see com.thundercats.queuer.activities.FeedActivity#onOptionsItemSelected(android.view.MenuItem)
      * @param resultCode Either {@link android.app.Activity#RESULT_OK} or
      *                      {@link android.app.Activity#RESULT_CANCELED}.
-     * @param intentResult
+     * @param intentResult The intent that is passed back from the called activity.
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent intentResult) {
         if (requestCode == CREATE_PROJECT_REQUEST) {

@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.thundercats.queuer.R;
+import com.thundercats.queuer.adapters.FeedAdapter;
 import com.thundercats.queuer.models.Project;
 
 /**
@@ -59,9 +60,14 @@ public class CreateProjectActivity extends ActionBarActivity {
             return;
         }
 
+        // Get the FeedAdapter from the calling activity
+        FeedAdapter feedAdapter = (FeedAdapter) getIntent().getParcelableExtra(FeedAdapter.INTENT_KEY);
+        // Get the next available unique ID
+        int id = feedAdapter.getNextID();
+
         // Set intent with data
         Intent result = new Intent();
-        result.putExtra(Project.INTENT_KEY, new Project(id, projectName, projectColor));
+        result.putExtra(Project.INTENT_KEY, new Project(id, projectName, color));
         setResult(RESULT_OK, result);
         finish();
     }
