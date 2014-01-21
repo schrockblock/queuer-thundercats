@@ -60,7 +60,7 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
 
     @Override
     public boolean isEnabled(int i) {
-        return false;
+        return true;
     }
 
     @Override
@@ -124,6 +124,7 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener {
         projects.add(indexOne, temp2);
         projects.remove(indexTwo);
         projects.add(indexTwo, temp1);
+        notifyDataSetChanged();
     }
 
     @Override
