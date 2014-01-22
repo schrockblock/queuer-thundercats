@@ -120,9 +120,6 @@ public class FeedActivity extends ActionBarActivity {
             }
         });
 
-
-<<<<<<< HEAD
-=======
          listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
              @Override
              public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -132,12 +129,6 @@ public class FeedActivity extends ActionBarActivity {
              }
          });
 
-
-
-
-
-
->>>>>>> be03a3f9aeaffc728e7215388681d148602fd0a9
         listView.enableSwipeToDismiss();
         listView.enableRearranging();
     }

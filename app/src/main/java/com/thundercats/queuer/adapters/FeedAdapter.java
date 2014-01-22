@@ -308,18 +308,10 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener, P
     public void swapElements(int indexOne, int indexTwo) {
         Project temp1 = getItem(indexOne);
         Project temp2 = getItem(indexTwo);
-<<<<<<< HEAD
         visibleProjects.remove(indexOne);
         visibleProjects.add(indexOne, temp2);
         visibleProjects.remove(indexTwo);
         visibleProjects.add(indexTwo, temp1);
-=======
-        projects.remove(indexOne);
-        projects.add(indexOne, temp2);
-        projects.remove(indexTwo);
-        projects.add(indexTwo, temp1);
-        notifyDataSetChanged();
->>>>>>> be03a3f9aeaffc728e7215388681d148602fd0a9
     }
 
     /**
