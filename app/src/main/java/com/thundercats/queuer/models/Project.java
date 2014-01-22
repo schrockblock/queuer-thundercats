@@ -1,5 +1,7 @@
 package com.thundercats.queuer.models;
 
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
 /**

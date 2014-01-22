@@ -14,6 +14,7 @@ import android.widget.Spinner;
 
 import com.thundercats.queuer.R;
 import com.thundercats.queuer.adapters.ProjectAdapter;
+import com.thundercats.queuer.models.Project;
 import com.thundercats.queuer.models.Task;
 import com.thundercats.queuer.views.EnhancedListView;
 
@@ -64,7 +65,9 @@ public class ProjectActivity extends ActionBarActivity {
         // Get the project ID from the Intent. IDs default to -1 if not provided.
         project_id = getIntent().getIntExtra("project_id", -1);
 
-        project = getIntent().get;
+        project = getIntent().getExtraSerializable();
+
+        //todo import project from feed activity
 
         // Set the action bar to display the project number.
         ActionBar actionBar = getSupportActionBar();
@@ -151,9 +154,7 @@ public class ProjectActivity extends ActionBarActivity {
                                 public void onClick(DialogInterface dialog, int id) {
                                     String color = spinner.getSelectedItem().toString();
 
-                                    task.setProject_id(project_id);
-                                    tasks.add(0, task);
-                                    adapter.notifyDataSetChanged();
+                                    //todo select a color from XML then update project
                                 }
                             })
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
