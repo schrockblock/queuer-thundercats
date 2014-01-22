@@ -24,6 +24,7 @@
     <string name="n_items_deleted">n items deleted</string>
     <string name="change_color">Change Color</string>
     <string name="choose_color">Choose a Color</string>
+    <string name="remember_me">Remember Login Credentials</string>
 
 
 </resources>
