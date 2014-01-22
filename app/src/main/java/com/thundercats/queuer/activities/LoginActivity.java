@@ -2,6 +2,7 @@ package com.thundercats.queuer.activities;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,6 +26,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class LoginActivity extends ActionBarActivity implements LoginManagerCallback {
+
+    private final String ACTIVITY_TITLE = "Login";
 
     /**
      * Shows/hides the progress bar.
@@ -63,6 +66,10 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(ACTIVITY_TITLE);
+
 
         Button login = (Button) findViewById(R.id.btn_login);
         final EditText user = (EditText) findViewById(R.id.et_username);
