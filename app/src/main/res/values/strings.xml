@@ -28,6 +28,7 @@
     <string name="no_tasks_warning">No tasks available</string>
     <string name="hint_task_name">task name (e.g., MyTask)</string>
     <string name="hint_change_task_name">new task name (e.g., MyTask)</string>
+    <string name="remember_me">Remember Login Credentials</string>
 
 
 </resources>
