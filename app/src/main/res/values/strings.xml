@@ -24,6 +24,10 @@
     <string name="n_items_deleted">n items deleted</string>
     <string name="change_color">Change Color</string>
     <string name="choose_color">Choose a Color</string>
+    <string name="no_projects_warning">No projects available</string>
+    <string name="no_tasks_warning">No tasks available</string>
+    <string name="hint_task_name">task name (e.g., MyTask)</string>
+    <string name="hint_change_task_name">new task name (e.g., MyTask)</string>
 
 
 </resources>

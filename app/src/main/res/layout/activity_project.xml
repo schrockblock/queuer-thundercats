@@ -5,8 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/tv_warning_no_projects"
+        android:text="@string/no_tasks_warning"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textSize="25sp"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent" />
+
     <com.thundercats.queuer.views.EnhancedListView
         android:id="@+id/lv_tasks"
+        android:visibility="gone"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         />

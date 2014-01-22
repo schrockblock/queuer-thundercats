@@ -16,6 +16,7 @@ import com.google.gson.JsonSyntaxException;
 import com.thundercats.queuer.QueuerApplication;
 import com.thundercats.queuer.R;
 import com.thundercats.queuer.interfaces.LoginManagerCallback;
+import com.thundercats.queuer.models.LoginModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -78,27 +79,6 @@ public class LoginManager {
     }
 
     /**
-     * A class that Gson converts to Json, which is then wrapped in a JSONObject.
-     */
-    private class LoginAttempt {
-        private final String user;
-        private final String pass;
-
-        public String getPass() {
-            return pass;
-        }
-
-        public String getUser() {
-            return user;
-        }
-
-        private LoginAttempt(String user, String pass) {
-            this.user = user;
-            this.pass = pass;
-        }
-    }
-
-    /**
      * Creates a listener for the JsonObjectRequest.
      * @return A listener for the JsonObjectRequest.
      */
@@ -140,7 +120,7 @@ public class LoginManager {
     private JSONObject createJSONObject(String username, String password) {
         JSONObject jsonObject = null;
         try {
-            String json = new Gson().toJson(new LoginAttempt(username, password));
+            String json = new Gson().toJson(new LoginModel(username, password));
             Log.d("LoginManager", json);
             jsonObject = new JSONObject(json);
         } catch (JSONException e) {

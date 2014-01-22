@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thundercats.queuer.R;
@@ -41,6 +42,7 @@ public class FeedActivity extends ActionBarActivity {
                 Bundle data = intentResult.getExtras();
                 Project project = (Project) data.getParcelable(Project.INTENT_KEY);
                 adapter.add(project);
+                refreshNoProjectsWarning();
             }
         }
     }
@@ -56,7 +58,7 @@ public class FeedActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_add_project:
+            case R.id.action_create_project:
                 // The Intent for going to the "Create New Project" screen
                 Intent intent = new Intent(FeedActivity.this, CreateProjectActivity.class);
                 // FeedAdapter must be passed since it's used for getNextID();
@@ -83,6 +85,23 @@ public class FeedActivity extends ActionBarActivity {
     }
 
     /**
+     * Shows/hides the warning depending on whether there are visible projects.
+     */
+    private void refreshNoProjectsWarning() {
+        // We either show the TextView or the ListView, but not both
+        TextView warning = (TextView) findViewById(R.id.tv_warning_no_projects);
+        EnhancedListView listView = (EnhancedListView) findViewById(R.id.lv_projects);
+        if (adapter.isEmpty()) {
+            warning.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        }
+        else {
+            warning.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
      * What happens when this activity is created.
      *
      * @param savedInstanceState
@@ -98,6 +117,9 @@ public class FeedActivity extends ActionBarActivity {
         EnhancedListView listView = (EnhancedListView) findViewById(R.id.lv_projects);
         adapter = new FeedAdapter(this);
         listView.setAdapter(adapter);
+
+        // If there are no projects left, show warning
+        refreshNoProjectsWarning();
 
         /*
         TODO When you dismiss a project, you are really dismissing the project's first task.
@@ -121,6 +143,7 @@ public class FeedActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(FeedActivity.this, ProjectActivity.class);
+                // TODO shouldn't we disallow this if putExtra fails?
                 intent.putExtra("project_id", adapter.getItemId(position));
                 startActivity(intent);
             }

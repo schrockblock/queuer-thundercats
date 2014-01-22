@@ -1,5 +1,7 @@
 package com.thundercats.queuer.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -10,6 +12,7 @@ import android.widget.EditText;
 import com.thundercats.queuer.R;
 import com.thundercats.queuer.adapters.FeedAdapter;
 import com.thundercats.queuer.models.Project;
+import com.thundercats.queuer.models.Task;
 
 /**
  * Created by kmchen1 on 1/20/14.
@@ -17,12 +20,12 @@ import com.thundercats.queuer.models.Project;
 public class CreateProjectActivity extends ActionBarActivity {
 
     private final String ACTIVITY_TITLE = "Create a Project";
+    private final String WARN_DIALOG_TITLE = "Warning";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_project);
-
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(ACTIVITY_TITLE);
     }
@@ -30,15 +33,33 @@ public class CreateProjectActivity extends ActionBarActivity {
     /**
      * Shows user a dialog, reminding them to fill out all fields with appropriate values.
      */
-    private void showDialog() {
+    private void showWarningDialog(String warning) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(WARN_DIALOG_TITLE);
+        View layout = getLayoutInflater().inflate(R.layout.dialog_blank, null);
 
+        alertDialogBuilder
+                .setMessage(warning)
+                //.setCancelable(true)
+                .setView(layout)
+                .setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {}
+                        });
+                /*
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {}
+                });
+                */
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     /**
      * The user has pressed the Okay button.
      * First checks to see EditText widgets are not blank.
      * Then creates a new project and takes the user back to FeedActivity.
-     * @param view
+     * @param view The view that was pressed. For now, unused in this method.
      */
     public void okayButtonPressed(View view) {
         // Get strings from EditText widgets
@@ -49,7 +70,7 @@ public class CreateProjectActivity extends ActionBarActivity {
 
         // Ensure fields aren't empty
         if (projectName.isEmpty() || projectColor.isEmpty()) {
-            showDialog();
+            showWarningDialog("Fields cannot be empty.");
             return;
         }
 
@@ -58,7 +79,7 @@ public class CreateProjectActivity extends ActionBarActivity {
         try {
             color = Integer.parseInt(projectColor);
         } catch (NumberFormatException e) {
-            showDialog();
+            showWarningDialog("Color field must be an int.");
             return;
         }
 
@@ -69,14 +90,14 @@ public class CreateProjectActivity extends ActionBarActivity {
 
         // Set intent with data
         Intent result = new Intent();
-        result.putExtra(Project.INTENT_KEY, new Project(id, projectName, color));
+        result.putExtra(Project.INTENT_KEY, new Project(this, id, projectName, color));
         setResult(RESULT_OK, result);
         finish();
     }
 
     /**
      * Takes user back to FeedActivity.
-     * @param view
+     * @param view The view that was pressed. For now, unused in this method.
      */
     public void cancelButtonPressed(View view) {
         setResult(RESULT_CANCELED);
