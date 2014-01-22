@@ -56,10 +56,11 @@ public class FeedActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add_project:
-                startActivityForResult(
-                   new Intent(FeedActivity.this, CreateProjectActivity.class),
-                        CREATE_PROJECT_REQUEST
-                );
+                // The Intent for going to the "Create New Project" screen
+                Intent intent = new Intent(FeedActivity.this, CreateProjectActivity.class);
+                // FeedAdapter must be passed since it's used for getNextID();
+                intent.putExtra(FeedAdapter.INTENT_KEY, adapter);
+                startActivityForResult(intent, CREATE_PROJECT_REQUEST);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

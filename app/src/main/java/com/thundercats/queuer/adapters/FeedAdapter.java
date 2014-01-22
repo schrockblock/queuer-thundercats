@@ -16,6 +16,20 @@ import com.thundercats.queuer.models.Project;
 import java.util.ArrayList;
 
 /**
+ * {@code FeedAdapter} is used to manage the list of {@code Project}s
+ * in {@code FeedActivity}. It maintains two lists, one of the total
+ * projects ever created, and another of the projects that are visible
+ * to the user. When a user chooses to hide a project,
+ * {@link android.widget.BaseAdapter#notifyDataSetChanged()} filters out
+ * the hidden projects from the visible ones.
+ * <p/>
+ * {@code FeedAdapter} implements {@code Parcelable} since it must be able to
+ * get passed between activities. For instance, when the user is in
+ * {@link com.thundercats.queuer.activities.FeedActivity} and wants to create a new
+ * {@code Project}, {@link com.thundercats.queuer.activities.CreateProjectActivity}
+ * is launched with an {@code Intent}, which has as an extra a {@code FeedAdapter}.
+ * This is because projects must be given unique project IDs upon instantiation, and
+ * only the {@code FeedAdapter} can dole out unique IDs since it controls the list of projects.
  * Created by kmchen1 on 1/17/14.
  */
 public class FeedAdapter extends BaseAdapter implements RearrangementListener, Parcelable {
@@ -34,17 +48,7 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener, P
             };
 
     /**
-     * The recreation/unmarshalling constructor.
-     *
-     * @param in The parcel which is used to recreate this FeedAdapter.
-     */
-    public FeedAdapter(Parcel in) {
-        in.readTypedList(visibleProjects, Project.CREATOR);
-        in.readTypedList(projects, Project.CREATOR);
-    }
-
-    /**
-     * The key for storing {@code FeedAdapter}s as {@code Intent} extras.
+     * The key for storing a {@code FeedAdapter} as an {@code Intent} extra.
      */
     public static final String INTENT_KEY = "feed_adapter";
 
@@ -58,8 +62,45 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener, P
      */
     private ArrayList<Project> projects = new ArrayList<Project>();
 
-    /** */
+    /**
+     * The Context (in this case, the activity) under which this adapter is constructed.
+     */
     private Context context;
+
+    /**
+     * The re-creation/unmarshalling constructor.
+     *
+     * @param in The parcel which is used to recreate this FeedAdapter.
+     *           Objects are read from the parcel in the same order in which they were written.
+     */
+    public FeedAdapter(Parcel in) {
+        in.readTypedList(visibleProjects, Project.CREATOR);
+        in.readTypedList(projects, Project.CREATOR);
+    }
+
+    /**
+     * Describe the kinds of special objects contained
+     * in this Parcelable's marshalled representation.
+     *
+     * @return a bitmask indicating the set of special
+     * object types marshalled by the Parcelable.
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * Flatten this object in to a Parcel.
+     *
+     * @param parcel The Parcel in which the object should be written.
+     * @param i      Additional flags about how the object should be written.
+     */
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeTypedList(visibleProjects);
+        parcel.writeTypedList(projects);
+    }
 
     /**
      * Constructs a new ProjectAdapter.
@@ -281,13 +322,4 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener, P
 
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }
