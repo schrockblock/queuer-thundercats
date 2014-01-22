@@ -16,13 +16,15 @@ import com.thundercats.queuer.models.Project;
  */
 public class CreateProjectActivity extends ActionBarActivity {
 
+    private final String ACTIVITY_TITLE = "Create a Project";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_project);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Create a Project");
+        actionBar.setTitle(ACTIVITY_TITLE);
     }
 
     /**

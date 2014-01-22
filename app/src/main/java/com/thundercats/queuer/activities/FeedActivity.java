@@ -16,25 +16,24 @@ import com.thundercats.queuer.adapters.FeedAdapter;
 import com.thundercats.queuer.models.Project;
 import com.thundercats.queuer.views.EnhancedListView;
 
-import java.util.ArrayList;
-
 /**
  * Created by kmchen1 on 1/15/14.
  */
 public class FeedActivity extends ActionBarActivity {
+
+    private final String ACTIVITY_TITLE = "Projects";
 
     static final int CREATE_PROJECT_REQUEST = 0;
 
     private FeedAdapter adapter;
 
     /**
-     *
-     * @param requestCode The request code that is attached to the Intent that launches the
-     *                    {@link com.thundercats.queuer.activities.CreateProjectActivity}.
-     *                    @see com.thundercats.queuer.activities.FeedActivity#onOptionsItemSelected(android.view.MenuItem)
-     * @param resultCode Either {@link android.app.Activity#RESULT_OK} or
-     *                      {@link android.app.Activity#RESULT_CANCELED}.
+     * @param requestCode  The request code that is attached to the Intent that launches the
+     *                     {@link com.thundercats.queuer.activities.CreateProjectActivity}.
+     * @param resultCode   Either {@link android.app.Activity#RESULT_OK} or
+     *                     {@link android.app.Activity#RESULT_CANCELED}.
      * @param intentResult The intent that is passed back from the called activity.
+     * @see com.thundercats.queuer.activities.FeedActivity#onOptionsItemSelected(android.view.MenuItem)
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent intentResult) {
         if (requestCode == CREATE_PROJECT_REQUEST) {
@@ -50,6 +49,7 @@ public class FeedActivity extends ActionBarActivity {
      * Handles presses on action bar items.
      * Calls a switch statement on all ids in the menu that was set in
      * {@link com.thundercats.queuer.activities.FeedActivity#onCreateOptionsMenu(android.view.Menu)}.
+     *
      * @param item The selected item.
      * @return True since an item was selected.
      */
@@ -70,6 +70,7 @@ public class FeedActivity extends ActionBarActivity {
 
     /**
      * Sets the menu.
+     *
      * @param menu The menu.
      * @return
      */
@@ -83,6 +84,7 @@ public class FeedActivity extends ActionBarActivity {
 
     /**
      * What happens when this activity is created.
+     *
      * @param savedInstanceState
      */
     @Override
@@ -91,15 +93,10 @@ public class FeedActivity extends ActionBarActivity {
         setContentView(R.layout.activity_feed);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Projects");
-
-        ArrayList<Project> projects = new ArrayList<Project>(20);
-        for (int i = 0; i < 20; i++) {
-            projects.add(new Project(i, "Project " + i));
-        }
+        actionBar.setTitle(ACTIVITY_TITLE);
 
         EnhancedListView listView = (EnhancedListView) findViewById(R.id.lv_projects);
-        adapter = new FeedAdapter(this, projects);
+        adapter = new FeedAdapter(this);
         listView.setAdapter(adapter);
 
         /*
@@ -120,14 +117,14 @@ public class FeedActivity extends ActionBarActivity {
             }
         });
 
-         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-             @Override
-             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                 Intent intent = new Intent(FeedActivity.this, ProjectActivity.class);
-                 intent.putExtra("project_id", adapter.getItemId(position));
-                 startActivity(intent);
-             }
-         });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(FeedActivity.this, ProjectActivity.class);
+                intent.putExtra("project_id", adapter.getItemId(position));
+                startActivity(intent);
+            }
+        });
 
         listView.enableSwipeToDismiss();
         listView.enableRearranging();

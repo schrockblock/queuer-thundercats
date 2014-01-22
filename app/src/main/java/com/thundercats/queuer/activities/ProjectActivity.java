@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.thundercats.queuer.R;
 import com.thundercats.queuer.adapters.ProjectAdapter;
@@ -23,6 +24,8 @@ import java.util.ArrayList;
  * Created by kmchen1 on 1/19/14.
  */
 public class ProjectActivity extends ActionBarActivity {
+
+    private final String ACTIVITY_TITLE = "New Task";
 
     /**
      * The project's ID.
@@ -94,37 +97,74 @@ public class ProjectActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_add_task) {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-            // set title
-            alertDialogBuilder.setTitle("New Task");
-
-            View layout = getLayoutInflater().inflate(R.layout.new_task, null);
-
-            final EditText taskTitle = (EditText)layout.findViewById(R.id.task);
-
-            // set dialog message
-            alertDialogBuilder
-                    //.setMessage(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)))
-                    .setCancelable(true)
-                    .setView(layout)
-                    .setPositiveButton("Ok",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    Task task = new Task();
-                                    task.setName(taskTitle.getText().toString());
-                                    task.setProject_id(project_id);
-                                    tasks.add(0, task);
-                                    adapter.notifyDataSetChanged();
-                                }
-                            })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,int id) {}
-                    });
-            AlertDialog alertDialog = alertDialogBuilder.create();
-            alertDialog.show();
-            return true;
+        switch(id) {
+            case R.id.action_add_task:
+                showAddTaskDialog();
+                return true;
+            case R.id.action_change_color:
+                showChangeColorDialog();
+                return true;
+            default:
+                return true;
         }
-        return super.onOptionsItemSelected(item);
     }
+
+    private void showChangeColorDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        // set title
+        alertDialogBuilder.setTitle(ACTIVITY_TITLE);
+
+        View layout = getLayoutInflater().inflate(R.layout.change_colors, null);
+
+        final Spinner spinner = (Spinner)layout.findViewById(R.id.spinner_change_color);
+
+        // set dialog message
+        alertDialogBuilder
+                //.setMessage(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)))
+                .setCancelable(true)
+                .setView(layout)
+                .setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                String color = spinner.getSelectedItem().toString();
+                            }
+                        })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {}
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    private void showAddTaskDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        // set title
+        alertDialogBuilder.setTitle(ACTIVITY_TITLE);
+
+        View layout = getLayoutInflater().inflate(R.layout.new_task, null);
+
+        final EditText taskTitle = (EditText)layout.findViewById(R.id.task);
+
+        // set dialog message
+        alertDialogBuilder
+                //.setMessage(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)))
+                .setCancelable(true)
+                .setView(layout)
+                .setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Task task = new Task();
+                                task.setName(taskTitle.getText().toString());
+                                task.setProject_id(project_id);
+                                tasks.add(0, task);
+                                adapter.notifyDataSetChanged();
+                            }
+                        })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {}
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
 }
