@@ -4,7 +4,11 @@ package com.thundercats.queuer.constants;
  * Created by kmchen1 on 1/21/14.
  */
 public enum MyColor {
+
     RED("Red", 5);
+    BLUE("Blue",6);
+
+
     private final String name;
 
     public int getColor() {

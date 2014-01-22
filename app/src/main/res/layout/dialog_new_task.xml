@@ -13,15 +13,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:ems="10"
-        android:hint="Task" />
+        android:hint="@string/hint_task_name" />
     <requestFocus/>
-    <EditText
-        android:id="@+id/position"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:layout_below="@+id/task"
-        android:text="0"
-        />
 
 </RelativeLayout>

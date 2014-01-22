@@ -1,10 +1,14 @@
 package com.thundercats.queuer.models;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.thundercats.queuer.database.ProjectDataSource;
+
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * A view (a project) that appears in the ListView of projects.
@@ -12,9 +16,7 @@ import java.io.Serializable;
  */
 public class Project implements Parcelable {
 
-    /**
-     * The Creator creates Project arrays and Projects from Parcels.
-     */
+    /** The Creator creates Project arrays and Projects from Parcels. */
     public static final Parcelable.Creator<Project> CREATOR =
             new Parcelable.Creator<Project>() {
                 @Override
@@ -28,41 +30,25 @@ public class Project implements Parcelable {
                 }
             };
 
-    /**
-     * The key for storing {@code Project}s as {@code Intent} extras.
-     */
+    /** The key for storing {@code Project}s as {@code Intent} extras. */
     public static final String INTENT_KEY = "project";
 
-    /**
-     * Whether this project is hidden.
-     */
+    /** Whether this project is hidden. */
     private boolean isHidden;
 
-    /**
-     * This project's unique ID. Useful since users can move projects around.
-     */
+    /** This project's unique ID. Useful since users can move projects around. */
     private int id;
 
-    /**
-     * This project's title.
-     */
+    /** */
+    private int localId;
+
+    /** This project's title. */
     private String title;
 
-    /**
-     * This project's color.
-     */
+    /** This project's color. */
     private int color;
 
-    /**
-     * Constructs a new Project.
-     *
-     * @param id    This project's ID.
-     * @param title This project's title.
-     */
-    public Project(int id, String title) {
-        this.id = id;
-        this.title = title;
-    }
+    public Project() {}
 
     /**
      * Constructs a new Project.
@@ -71,10 +57,23 @@ public class Project implements Parcelable {
      * @param title This project's title.
      * @param color This project's color.
      */
-    public Project(int id, String title, int color) {
+    public Project(Context context, int id, String title, int color) {
         this.id = id;
         this.title = title;
         this.color = color;
+
+        ProjectDataSource projectDataSource = new ProjectDataSource(context);
+        projectDataSource.open();
+        localId = projectDataSource.createProject(title, 0, id, new Date(), new Date()).localId;
+        projectDataSource.close();
+    }
+
+    public int getLocalId() {
+        return localId;
+    }
+
+    public void setLocalId(int localId) {
+        this.localId = localId;
     }
 
     /**
