@@ -5,11 +5,17 @@ package com.thundercats.queuer.constants;
  */
 public enum MyColor {
 
-    RED("Red", 5);
-    BLUE("Blue",6);
+    RED("Red", 5),
+    BLUE("Blue", 6);
 
 
     private final String name;
+    private final int color;
+
+    private MyColor(String name, int color) {
+        this.name = name;
+        this.color = color;
+    }
 
     public int getColor() {
         return color;
@@ -19,9 +25,4 @@ public enum MyColor {
         return name;
     }
 
-    private final int color;
-    private MyColor(String name, int color) {
-        this.name = name;
-        this.color = color;
-    }
 }

@@ -1,33 +1,32 @@
 package com.thundercats.queuer.activities;
 
-import android.os.AsyncTask;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.util.Log;
-import android.widget.Button;
-import android.widget.EditText;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.volley.*;
-import com.android.volley.toolbox.Volley;
 import com.thundercats.queuer.R;
-import com.thundercats.queuer.managers.LoginManager;
 import com.thundercats.queuer.interfaces.LoginManagerCallback;
-
-import java.net.MalformedURLException;
-import java.net.URL;
+import com.thundercats.queuer.managers.LoginManager;
 
 public class LoginActivity extends ActionBarActivity implements LoginManagerCallback {
 
     private final String ACTIVITY_TITLE = "Login";
+    private final String LOGIN_PREFERENCES_FILE_NAME = "login";
+    private final String LOGIN_PREFERENCES_USER_KEY = "username";
+    private final String LOGIN_PREFERENCES_PASS_KEY = "password";
+    private final String LOGIN_PREFERENCES_REMEMEBER_KEY = "remember";
 
     /**
      * Shows/hides the progress bar.
@@ -70,28 +69,44 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(ACTIVITY_TITLE);
 
-
         Button login = (Button) findViewById(R.id.btn_login);
         final EditText user = (EditText) findViewById(R.id.et_username);
         final EditText pass = (EditText) findViewById(R.id.et_password);
+        final String username = user.getText().toString();
+        final String password = pass.getText().toString();
+        final CheckBox remember = (CheckBox) findViewById(R.id.cb_remember);
         final TextView textView = (TextView) findViewById(R.id.progress_text);
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (remember.isChecked()) {
+                    SharedPreferences preferences = getSharedPreferences(LOGIN_PREFERENCES_FILE_NAME, MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putBoolean(LOGIN_PREFERENCES_REMEMEBER_KEY, true);
+                    editor.putString(LOGIN_PREFERENCES_USER_KEY, username);
+                    editor.putString(LOGIN_PREFERENCES_PASS_KEY, password);
+                    editor.commit();
+                }
                 LoginManager manager = LoginManager.getInstance();
                 manager.setCallback(LoginActivity.this, LoginActivity.this);
                 try {
                     showProgressBar(true);
                     textView.setVisibility(View.VISIBLE);
                     textView.setText("Logging in...");
-                    String username = user.getText().toString();
-                    String password = pass.getText().toString();
                     manager.login(username, password);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
+
+        // If we are "remembering", then fill in the fields
+        SharedPreferences preferences = getSharedPreferences(LOGIN_PREFERENCES_FILE_NAME, MODE_PRIVATE);
+        if (preferences.getBoolean(LOGIN_PREFERENCES_REMEMEBER_KEY, false)){
+            user.setText(preferences.getString(LOGIN_PREFERENCES_USER_KEY, ""));
+            pass.setText(preferences.getString(LOGIN_PREFERENCES_PASS_KEY, ""));
+            remember.setChecked(true);
+        }
 
     }
 

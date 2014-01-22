@@ -14,8 +14,11 @@ import android.widget.Toast;
 
 import com.thundercats.queuer.R;
 import com.thundercats.queuer.adapters.FeedAdapter;
+import com.thundercats.queuer.database.ProjectDataSource;
 import com.thundercats.queuer.models.Project;
 import com.thundercats.queuer.views.EnhancedListView;
+
+import java.util.ArrayList;
 
 /**
  * Created by kmchen1 on 1/15/14.
@@ -40,7 +43,9 @@ public class FeedActivity extends ActionBarActivity {
         if (requestCode == CREATE_PROJECT_REQUEST) {
             if (resultCode == RESULT_OK) {
                 Bundle data = intentResult.getExtras();
-                Project project = (Project) data.getParcelable(Project.INTENT_KEY);
+                Project project = data.getParcelable(Project.INTENT_KEY);
+                if (project == null)
+                    Toast.makeText(this, "NULL PROJECT PASSED BACK!", Toast.LENGTH_SHORT).show();
                 adapter.add(project);
                 refreshNoProjectsWarning();
             }
@@ -74,7 +79,7 @@ public class FeedActivity extends ActionBarActivity {
      * Sets the menu.
      *
      * @param menu The menu.
-     * @return
+     * @return True, since the menu is displayed.
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -104,7 +109,10 @@ public class FeedActivity extends ActionBarActivity {
     /**
      * What happens when this activity is created.
      *
-     * @param savedInstanceState
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle
+     *                           contains the data it most recently supplied in
+     *                           onSaveInstanceData(Bundle). Otherwise, it is null.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,8 +122,13 @@ public class FeedActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(ACTIVITY_TITLE);
 
+        ProjectDataSource projectDataSource = new ProjectDataSource(this);
+        projectDataSource.open();
+        ArrayList<Project> projects = projectDataSource.getAllProjects();
+        projectDataSource.close();
+
         EnhancedListView listView = (EnhancedListView) findViewById(R.id.lv_projects);
-        adapter = new FeedAdapter(this);
+        adapter = new FeedAdapter(this, projects);
         listView.setAdapter(adapter);
 
         // If there are no projects left, show warning

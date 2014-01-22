@@ -105,15 +105,6 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener, P
     /**
      * Constructs a new ProjectAdapter.
      *
-     * @param context The new context.
-     */
-    public FeedAdapter(Context context) {
-        this.context = context;
-    }
-
-    /**
-     * Constructs a new ProjectAdapter.
-     *
      * @param context  The new context.
      * @param projects The list of projects.
      */
@@ -208,8 +199,8 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener, P
     }
 
     /**
-     * @param i
-     * @return
+     * @param i The project's position.
+     * @return True, since all project's are enabled (i.e., clickable).
      */
     @Override
     public boolean isEnabled(int i) {
@@ -300,8 +291,8 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener, P
      * <p/>
      * The list of total projects is unaffected, as it preserves the order of project IDs.
      *
-     * @param indexOne
-     * @param indexTwo
+     * @param indexOne The index of the first element.
+     * @param indexTwo The index of the second element.
      * @see com.thundercats.queuer.interfaces.RearrangementListener#swapElements(int, int)
      */
     @Override
