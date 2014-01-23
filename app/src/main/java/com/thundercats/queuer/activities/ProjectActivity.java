@@ -12,9 +12,11 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.thundercats.queuer.R;
 import com.thundercats.queuer.adapters.ProjectAdapter;
+import com.thundercats.queuer.models.Project;
 import com.thundercats.queuer.models.Task;
 import com.thundercats.queuer.views.EnhancedListView;
 
@@ -31,19 +33,9 @@ public class ProjectActivity extends ActionBarActivity {
     private final String ADD_TASK_DIALOG_TITLE = "New Task";
     private final String EDIT_TASK_DIALOG_TITLE = "Edit Task";
 
-    /**
-     * The project's ID.
-     */
+    private Project project;
     private int project_id;
-
-    /**
-     * The list of tasks.
-     */
     private ArrayList<Task> tasks = new ArrayList<Task>();
-
-    /**
-     * The project's base adapter. A rearrangement listener. Controls the list of tasks.
-     */
     private ProjectAdapter adapter;
 
     /**
@@ -54,12 +46,13 @@ public class ProjectActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project);
 
-        // Get the project ID from the Intent. IDs default to -1 if not provided.
-        project_id = getIntent().getIntExtra("project_id", -1);
+        project = getIntent().getParcelableExtra(Project.INTENT_KEY);
+        project_id = project.getId();
 
         // Set the action bar to display the project number.
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Project " + project_id);
+        actionBar.setTitle(project.getTitle());
+        Toast.makeText(this, "Project " + project_id + ": " + project.getTitle(), Toast.LENGTH_LONG).show();
 
         EnhancedListView listView = (EnhancedListView) findViewById(R.id.lv_tasks);
         adapter = new ProjectAdapter(this, tasks);

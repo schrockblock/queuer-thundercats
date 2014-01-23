@@ -23,10 +23,10 @@ import com.thundercats.queuer.managers.LoginManager;
 public class LoginActivity extends ActionBarActivity implements LoginManagerCallback {
 
     private final String ACTIVITY_TITLE = "Login";
-    private final String LOGIN_PREFERENCES_FILE_NAME = "login";
-    private final String LOGIN_PREFERENCES_USER_KEY = "username";
-    private final String LOGIN_PREFERENCES_PASS_KEY = "password";
-    private final String LOGIN_PREFERENCES_REMEMEBER_KEY = "remember";
+    private final String LOGIN_PREFS_FILE_NAME = "login";
+    private final String LOGIN_PREFS_USERNAME_KEY = "username";
+    private final String LOGIN_PREFS_PASSWORD_KEY = "password";
+    private final String LOGIN_PREFS_REMEMBER_KEY = "remember";
 
     /**
      * Shows/hides the progress bar.
@@ -69,22 +69,25 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(ACTIVITY_TITLE);
 
-        Button login = (Button) findViewById(R.id.btn_login);
         final EditText user = (EditText) findViewById(R.id.et_username);
         final EditText pass = (EditText) findViewById(R.id.et_password);
-        final String username = user.getText().toString();
-        final String password = pass.getText().toString();
         final CheckBox remember = (CheckBox) findViewById(R.id.cb_remember);
-        final TextView textView = (TextView) findViewById(R.id.progress_text);
+
+        Button login = (Button) findViewById(R.id.btn_login);
+
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final String username = user.getText().toString();
+                final String password = pass.getText().toString();
+                final TextView textView = (TextView) findViewById(R.id.progress_text);
+
                 if (remember.isChecked()) {
-                    SharedPreferences preferences = getSharedPreferences(LOGIN_PREFERENCES_FILE_NAME, MODE_PRIVATE);
+                    SharedPreferences preferences = getSharedPreferences(LOGIN_PREFS_FILE_NAME, MODE_PRIVATE);
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putBoolean(LOGIN_PREFERENCES_REMEMEBER_KEY, true);
-                    editor.putString(LOGIN_PREFERENCES_USER_KEY, username);
-                    editor.putString(LOGIN_PREFERENCES_PASS_KEY, password);
+                    editor.putBoolean(LOGIN_PREFS_REMEMBER_KEY, true);
+                    editor.putString(LOGIN_PREFS_USERNAME_KEY, username);
+                    editor.putString(LOGIN_PREFS_PASSWORD_KEY, password);
                     editor.commit();
                 }
                 LoginManager manager = LoginManager.getInstance();
@@ -101,10 +104,10 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
         });
 
         // If we are "remembering", then fill in the fields
-        SharedPreferences preferences = getSharedPreferences(LOGIN_PREFERENCES_FILE_NAME, MODE_PRIVATE);
-        if (preferences.getBoolean(LOGIN_PREFERENCES_REMEMEBER_KEY, false)){
-            user.setText(preferences.getString(LOGIN_PREFERENCES_USER_KEY, ""));
-            pass.setText(preferences.getString(LOGIN_PREFERENCES_PASS_KEY, ""));
+        SharedPreferences preferences = getSharedPreferences(LOGIN_PREFS_FILE_NAME, MODE_PRIVATE);
+        if (preferences.getBoolean(LOGIN_PREFS_REMEMBER_KEY, false)){
+            user.setText(preferences.getString(LOGIN_PREFS_USERNAME_KEY, ""));
+            pass.setText(preferences.getString(LOGIN_PREFS_PASSWORD_KEY, ""));
             remember.setChecked(true);
         }
 

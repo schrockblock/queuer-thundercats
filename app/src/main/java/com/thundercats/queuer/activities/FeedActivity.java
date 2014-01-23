@@ -134,9 +134,6 @@ public class FeedActivity extends ActionBarActivity {
         // If there are no projects left, show warning
         refreshNoProjectsWarning();
 
-        /*
-        TODO When you dismiss a project, you are really dismissing the project's first task.
-         */
         listView.setDismissCallback(new EnhancedListView.OnDismissCallback() {
             @Override
             public EnhancedListView.Undoable onDismiss(EnhancedListView listView, final int position) {
@@ -156,8 +153,10 @@ public class FeedActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(FeedActivity.this, ProjectActivity.class);
-                // TODO shouldn't we disallow this if putExtra fails?
-                intent.putExtra("project_id", adapter.getItemId(position));
+                // The ProjectActivity needs the project ID of the clicked Project
+                intent.putExtra(Project.PROJECT_ID_INTENT_KEY, adapter.getItemId(position));
+                // and also the Project that was clicked...
+                intent.putExtra(Project.INTENT_KEY, adapter.getItem(position));
                 startActivity(intent);
             }
         });
