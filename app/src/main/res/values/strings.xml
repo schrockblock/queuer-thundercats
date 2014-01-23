@@ -2,8 +2,33 @@
 <resources>
 
     <string name="app_name">QueuerThundercats</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="login_button">Login</string>
+
+    <string name="action_add_task">Add Task</string>
+    <string name="action_add_project">Add Project</string>
+
+    <string name="hint_project_name">project name (e.g., MyProject)</string>
+    <string name="hint_project_color">project color (e.g., 2)</string>
+    <string name="hint_password">password</string>
+    <string name="hint_username">username or email</string>
+
+    <string name="server">http://queuer-rndapp.rhcloud.com/api/v1/session</string>
+
+    <string name="button_login">Login</string>
+    <string name="button_create_account">Create Account</string>
+    <string name="button_okay">okay</string>
+    <string name="button_cancel">cancel</string>
+
+    <string name="undo">undo</string>
+    <string name="undo_all">undo all</string>
+    <string name="item_deleted">item deleted</string>
+    <string name="n_items_deleted">n items deleted</string>
+    <string name="change_color">Change Color</string>
+    <string name="choose_color">Choose a Color</string>
+    <string name="no_projects_warning">No projects available</string>
+    <string name="no_tasks_warning">No tasks available</string>
+    <string name="hint_task_name">task name (e.g., MyTask)</string>
+    <string name="hint_change_task_name">new task name (e.g., MyTask)</string>
+    <string name="remember_me">Remember Login Credentials</string>
+
 
 </resources>
