@@ -2,25 +2,20 @@ package com.thundercats.queuer.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.thundercats.queuer.R;
 import com.thundercats.queuer.adapters.ProjectAdapter;
-import com.thundercats.queuer.database.ProjectDataSource;
 import com.thundercats.queuer.database.TaskDataSource;
 import com.thundercats.queuer.models.Project;
 import com.thundercats.queuer.models.Task;
