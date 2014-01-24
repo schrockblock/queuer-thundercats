@@ -62,7 +62,7 @@ public class ProjectDataSource {
         ContentValues values = new ContentValues();
         values.put(ProjectOpenHelper.COLUMN_SERVER_ID, project.getId());
         values.put(ProjectOpenHelper.COLUMN_COLOR, project.getColor());
-        values.put(ProjectOpenHelper.COLUMN_TITLE, project.getTitle());
+        values.put(ProjectOpenHelper.COLUMN_TITLE, project.getName());
 
         database.update(ProjectOpenHelper.TABLE_PROJECTS,
                 values,
@@ -100,7 +100,7 @@ public class ProjectDataSource {
         project.setLocalId(cursor.getInt(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_ID)));
         project.setId(cursor.getInt(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_SERVER_ID)));
         project.setColor(cursor.getInt(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_COLOR)));
-        project.setTitle(cursor.getString(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_TITLE)));
+        project.setName(cursor.getString(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_TITLE)));
         return project;
     }
 }

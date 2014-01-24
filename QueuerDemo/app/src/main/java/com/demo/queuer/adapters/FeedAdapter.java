@@ -1,12 +1,10 @@
 package com.demo.queuer.adapters;
 
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.demo.queuer.interfaces.RearrangementListener;
@@ -64,7 +62,7 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener{
             convertView = LayoutInflater.from(context).inflate(R.layout.list_project, null);
         }
 
-        ((TextView)convertView.findViewById(R.id.tv_title)).setText(getItem(position).getTitle());
+        ((TextView)convertView.findViewById(R.id.tv_title)).setText(getItem(position).getName());
         convertView.findViewById(R.id.ll_project).setBackgroundColor(getItem(position).getColor());
 
         return convertView;

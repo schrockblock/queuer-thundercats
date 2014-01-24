@@ -30,6 +30,18 @@ android {
     }
 }
 
+sourceSets {
+    unitTest {
+        java.srcDir file('src/test/java')
+        resources.srcDir file('src/test/res')
+    }
+}
+
+configurations {
+    unitTestCompile.extendsFrom runtime
+    unitTestRuntime.extendsFrom unitTestCompile
+}
+
 dependencies {
     compile 'com.android.support:support-v4:19.0.0'
     compile 'com.android.support:appcompat-v7:19.0.0'
@@ -37,4 +49,20 @@ dependencies {
     compile files('src/main/res/libs/annotations.jar')
     compile 'com.android.support:support-v4:13.0.0'
     compile 'com.nineoldandroids:library:2.4.0'
+    unitTestCompile files("$project.buildDir/classes/release")
+    unitTestCompile 'junit:junit:4.10'
+    unitTestCompile 'org.robolectric:robolectric:2.1.+'
+    unitTestCompile 'com.google.android:android:4.0.1.2'
+    unitTestCompile 'com.android.support:support-v4:19.0.0'
+    unitTestCompile 'com.android.support:appcompat-v7:19.0.0'
+    unitTestCompile files('src/main/res/libs/gson-2.2.4.jar')
+    unitTestCompile files('src/main/res/libs/annotations.jar')
+    unitTestCompile 'com.android.support:support-v4:13.0.0'
+    unitTestCompile 'com.nineoldandroids:library:2.4.0'
 }
+
+task unitTest(type:Test, dependsOn: assemble) {
+    testClassesDir = project.sourceSets.unitTest.output.classesDir
+    classpath = project.sourceSets.unitTest.runtimeClasspath
+}
+check.dependsOn unitTest

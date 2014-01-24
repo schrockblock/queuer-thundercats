@@ -61,7 +61,7 @@ public class TaskDataSource {
         ContentValues values = new ContentValues();
         values.put(TaskOpenHelper.COLUMN_SERVER_ID, task.getLocalId());
         values.put(TaskOpenHelper.COLUMN_PROJECT_SERVER_ID, task.getProject_id());
-        values.put(TaskOpenHelper.COLUMN_POSITION, task.getPosition());
+        values.put(TaskOpenHelper.COLUMN_POSITION, task.getOrder());
         int complete = task.isFinished() ? 1 : 0;
         values.put(TaskOpenHelper.COLUMN_COMPLETED, complete);
         values.put(TaskOpenHelper.COLUMN_TEXT, task.getName());
@@ -102,7 +102,7 @@ public class TaskDataSource {
         task.setLocalId(cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_ID)));
         task.setProject_id(cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_PROJECT_SERVER_ID)));
         task.setName(cursor.getString(cursor.getColumnIndex(TaskOpenHelper.COLUMN_TEXT)));
-        task.setPosition(cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_POSITION)));
+        task.setOrder(cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_POSITION)));
         task.setFinished(1 == cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_COMPLETED)));
         return task;
     }
