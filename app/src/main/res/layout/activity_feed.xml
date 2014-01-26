@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/tv_warning_no_projects"
+        android:serverId="@+serverId/tv_warning_no_projects"
         android:text="@string/no_projects_warning"
         android:layout_gravity="center"
         android:gravity="center"
@@ -14,7 +14,7 @@
         android:layout_height="fill_parent" />
 
     <com.thundercats.queuer.views.EnhancedListView
-        android:id="@+id/lv_projects"
+        android:serverId="@+serverId/lv_projects"
         android:visibility="gone"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

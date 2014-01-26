@@ -219,7 +219,7 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener, P
 
     @Override
     public long getItemId(int i) {
-        return getItem(i).getId();
+        return getItem(i).getServerId();
     }
 
     /**

@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <com.demo.queuer.views.EnhancedListView
-        android:id="@+id/lv_tasks"
+        android:serverId="@+serverId/lv_tasks"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 

@@ -7,7 +7,7 @@
 
 
     <EditText
-        android:id="@+id/et_project_name"
+        android:serverId="@+serverId/et_project_name"
 
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
@@ -20,7 +20,7 @@
         android:layout_gravity="left" />
 
     <EditText
-        android:id="@+id/et_project_color"
+        android:serverId="@+serverId/et_project_color"
 
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
@@ -41,13 +41,13 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/btn_cancel"
+            android:serverId="@+serverId/btn_cancel"
             android:onClick="cancelButtonPressed"
             android:text="@string/button_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <Button
-            android:id="@+id/btn_okay"
+            android:serverId="@+serverId/btn_okay"
             android:onClick="okayButtonPressed"
             android:text="@string/button_okay"
             android:layout_width="wrap_content"

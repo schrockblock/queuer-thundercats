@@ -1,13 +1,11 @@
 package com.thundercats.queuer.models;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.thundercats.queuer.database.ProjectDataSource;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -40,7 +38,7 @@ public class Project implements Parcelable {
     private boolean isHidden;
 
     /** This project's unique ID. Useful since users can move projects around. */
-    private int id;
+    private int serverId;
 
     /** */
     private int localId;
@@ -51,24 +49,47 @@ public class Project implements Parcelable {
     /** This project's color. */
     private int color;
 
+    /** When the project was created. */
+    private Date dateCreated;
+
+    /** When the project was last updated. */
+    private Date dateUpdated;
+
+    /** Constructor for setting project fields. */
     public Project() {}
 
     /**
      * Constructs a new Project.
      *
-     * @param id    This project's ID.
+     * @param serverId This project's server ID.
      * @param title This project's title.
      * @param color This project's color.
      */
-    public Project(Context context, int id, String title, int color) {
-        this.id = id;
+    public Project(Context context, int serverId, String title, int color) {
+        this.serverId = serverId;
         this.title = title;
         this.color = color;
 
         ProjectDataSource projectDataSource = new ProjectDataSource(context);
         projectDataSource.open();
-        localId = projectDataSource.createProject(title, 0, id, new Date(), new Date()).localId;
+        localId = projectDataSource.createProject(title, 0, serverId, new Date(), new Date()).localId;
         projectDataSource.close();
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Date getDateUpdated() {
+        return dateUpdated;
+    }
+
+    public void setDateUpdated(Date dateUpdated) {
+        this.dateUpdated = dateUpdated;
     }
 
     public int getLocalId() {
@@ -84,17 +105,17 @@ public class Project implements Parcelable {
      *
      * @return This project's ID.
      */
-    public int getId() {
-        return id;
+    public int getServerId() {
+        return serverId;
     }
 
     /**
      * Sets this project's ID.
      *
-     * @param id The new ID.
+     * @param serverId The new ID.
      */
-    public void setId(int id) {
-        this.id = id;
+    public void setServerId(int serverId) {
+        this.serverId = serverId;
     }
 
     /**
@@ -149,7 +170,7 @@ public class Project implements Parcelable {
      */
     @Override
     public boolean equals(Object otherProject) {
-        return ((Project) otherProject).getId() == getId();
+        return ((Project) otherProject).getServerId() == getServerId();
     }
 
     /**
@@ -172,7 +193,7 @@ public class Project implements Parcelable {
      */
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(id);
+        parcel.writeInt(serverId);
         parcel.writeString(title);
         parcel.writeInt(color);
         parcel.writeInt(isHidden ? 1 : 0);
@@ -186,7 +207,7 @@ public class Project implements Parcelable {
      * @see com.thundercats.queuer.models.Project#CREATOR
      */
     public Project(Parcel in) {
-        id = in.readInt();
+        serverId = in.readInt();
         title = in.readString();
         color = in.readInt();
         isHidden = (in.readInt() == 1);

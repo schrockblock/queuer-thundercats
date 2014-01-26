@@ -6,7 +6,7 @@
 		android:background="@drawable/popup_bg"
 		android:paddingRight="8dp"
 		android:gravity="center">
-	<TextView android:id="@+id/text"
+	<TextView android:serverId="@+serverId/text"
 			android:padding="8dp"
 			android:textSize="16sp"
 			android:layout_weight="1"
@@ -22,7 +22,7 @@
 			android:layout_width="1dp"
 			android:layout_height="fill_parent"
 			android:background="@color/separator_color"/>
-	<Button android:id="@+id/undo"
+	<Button android:serverId="@+serverId/undo"
 			android:textColor="@color/popup_text_color"
 			android:background="@drawable/undo_btn_bg"
 			android:drawableLeft="@drawable/ic_action_undo"
