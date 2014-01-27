@@ -83,14 +83,9 @@ public class CreateProjectActivity extends ActionBarActivity {
             return;
         }
 
-        // Get the FeedAdapter from the calling activity
-        FeedAdapter feedAdapter = (FeedAdapter) getIntent().getParcelableExtra(FeedAdapter.INTENT_KEY);
-        // Get the next available unique ID
-        int id = feedAdapter.getNextID();
-
         // Set intent with data
         Intent result = new Intent();
-        result.putExtra(Project.INTENT_KEY, new Project(this, id, projectName, color));
+        result.putExtra(Project.INTENT_KEY, new Project(this, projectName, color));
         setResult(RESULT_OK, result);
         finish();
     }

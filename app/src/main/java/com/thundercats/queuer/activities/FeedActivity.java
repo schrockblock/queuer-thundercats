@@ -66,8 +66,6 @@ public class FeedActivity extends ActionBarActivity {
             case R.id.action_create_project:
                 // The Intent for going to the "Create New Project" screen
                 Intent intent = new Intent(FeedActivity.this, CreateProjectActivity.class);
-                // FeedAdapter must be passed since it's used for getNextID();
-                intent.putExtra(FeedAdapter.INTENT_KEY, adapter);
                 startActivityForResult(intent, CREATE_PROJECT_REQUEST);
                 return true;
             default:

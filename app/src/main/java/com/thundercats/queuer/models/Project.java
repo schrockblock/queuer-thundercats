@@ -66,12 +66,10 @@ public class Project implements Parcelable {
     /**
      * Constructs a new Project.
      *
-     * @param id This project's server ID.
      * @param title This project's title.
      * @param color This project's color.
      */
-    public Project(Context context, int id, String title, int color) {
-        this.id = id;
+    public Project(Context context, String title, int color) {
         this.title = title;
         this.color = color;
 

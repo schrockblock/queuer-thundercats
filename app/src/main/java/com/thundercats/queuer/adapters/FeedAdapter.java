@@ -116,16 +116,6 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener, P
     }
 
     /**
-     * Returns the next available unique project ID.
-     *
-     * @return Since projects cannot be deleted, the next available (zero-indexed)
-     * unique project ID will be the number of total projects.
-     */
-    public int getNextID() {
-        return projects.size();
-    }
-
-    /**
      * Removes all hidden projects from the list of visible projects.
      */
     private void refreshVisibleProjects() {

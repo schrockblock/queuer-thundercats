@@ -22,6 +22,7 @@ import com.thundercats.queuer.models.Task;
 import com.thundercats.queuer.views.EnhancedListView;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * The screen that displays all of the user's {@link com.thundercats.queuer.models.Task}s
@@ -230,17 +231,15 @@ public class ProjectActivity extends ActionBarActivity {
                 .setView(layout)
                 .setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Task task = new Task();
+                            public void onClick(DialogInterface dialog, int which) {
                                 String name = taskTitle.getText().toString();
                                 if (name.isEmpty()) {
                                     showWarningDialog("Task must have a name.");
                                     return;
                                 }
-                                task.setName(name);
-                                task.setProject_id(project_id);
+                                Date date = new Date();
+                                Task task = new Task(ProjectActivity.this, name, project_id, 0, date);
                                 adapter.add(task);
-                                adapter.notifyDataSetChanged();
                                 refreshNoTasksWarning();
                             }
                         })
