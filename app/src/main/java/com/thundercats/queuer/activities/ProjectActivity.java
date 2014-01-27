@@ -120,8 +120,8 @@ public class ProjectActivity extends ActionBarActivity {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                showEditTaskDialog();
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                showEditTaskDialog(adapter.getItem(position));
             }
         });
 
@@ -180,14 +180,15 @@ public class ProjectActivity extends ActionBarActivity {
     /**
      * Pops up the dialog for user to edit a task.
      * Called when user clicks on a task.
+     * @param clickedTask The task that was clicked.
      */
-    private void showEditTaskDialog() {
+    private void showEditTaskDialog(final Task clickedTask) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(EDIT_TASK_DIALOG_TITLE);
 
         View layout = getLayoutInflater().inflate(R.layout.dialog_edit_task, null);
 
-        final EditText taskTitle = (EditText) layout.findViewById(R.id.task);
+        final EditText taskTitle = (EditText) layout.findViewById(R.id.task_name);
 
         // set dialog message
         alertDialogBuilder
@@ -196,15 +197,14 @@ public class ProjectActivity extends ActionBarActivity {
                 .setView(layout)
                 .setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Task task = new Task();
-                                task.setName(taskTitle.getText().toString());
+                            public void onClick(DialogInterface dialog, int which) {
+                                clickedTask.setName(taskTitle.getText().toString());
                                 //adapter.notifyDataSetChanged();
                                 //refreshNoTasksWarning();
                             }
                         })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+                    public void onClick(DialogInterface dialog, int which) {
                     }
                 });
         AlertDialog alertDialog = alertDialogBuilder.create();
@@ -222,7 +222,7 @@ public class ProjectActivity extends ActionBarActivity {
 
         final View layout = getLayoutInflater().inflate(R.layout.dialog_new_task, null);
 
-        final EditText taskTitle = (EditText) layout.findViewById(R.id.task);
+        final EditText taskTitle = (EditText) layout.findViewById(R.id.task_name);
 
         // set dialog message
         alertDialogBuilder
