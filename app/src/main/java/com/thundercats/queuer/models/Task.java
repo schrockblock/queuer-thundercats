@@ -11,6 +11,9 @@ import java.util.Date;
  */
 public class Task {
 
+    /** The context under which this {@code Task} was created. */
+    private Context context;
+
     /**
      * The server ID of the {@code Project} to which this {@code Task} belongs.
      */
@@ -60,6 +63,7 @@ public class Task {
      * @param id         The new server ID of this {@code Task}.
      * @param localId    The new local ID of this {@code Task}.
      * @param finished   Whether or not this {@code Task} is finished.
+     * @see com.thundercats.queuer.database.TaskDataSource#cursorToTask(android.database.Cursor)
      */
     public Task(String name, int project_id, int position, int id, int localId, boolean finished) {
         this.name = name;
@@ -73,7 +77,7 @@ public class Task {
     }
 
     /**
-     * Constructs a {@code Task}.
+     * Constructs a {@code Task}. The primary constructor. Used when user adds a task.
      *
      * @param context    The context under which this {@code Task} was created.
      *                   Context is needed to write to the database.
@@ -82,7 +86,7 @@ public class Task {
      * @param position   The position where this {@code Task} will be inserted.
      */
     public Task(Context context, String name, int project_id, int position) {
-        // TODO should we save context for subsequent database writes?
+        this.context = context;
         this.name = name;
         this.project_id = project_id;
         this.position = position;
@@ -142,6 +146,10 @@ public class Task {
      */
     public void setName(String name) {
         this.name = name;
+        TaskDataSource dataSource = new TaskDataSource(context);
+        dataSource.open();
+        dataSource.updateTaskName(this, name);
+        dataSource.close();
     }
 
     /**

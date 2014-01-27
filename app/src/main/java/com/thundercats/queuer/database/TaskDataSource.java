@@ -25,6 +25,8 @@ public class TaskDataSource {
             TaskOpenHelper.COLUMN_POSITION,
             TaskOpenHelper.COLUMN_CREATED,
             TaskOpenHelper.COLUMN_UPDATED};
+    // the symbol for whereArgs
+    private final String WHERE_ARGS = "?";
 
     /**
      * Initializes the {@link com.thundercats.queuer.database.TaskOpenHelper}.
@@ -73,6 +75,7 @@ public class TaskDataSource {
      * Creates a row of cells from the given {@code Task} parameters.
      * Inserts the row into the database.
      * Get a {@code Cursor} over the inserted row.
+     *
      * @param text      The name of the {@code Task}.
      * @param projectId The server ID of the {@code Project} to which the {@code Task} belongs.
      * @param serverId  The server ID of the {@code Task}.
@@ -100,6 +103,24 @@ public class TaskDataSource {
         return newTask;
     }
 
+    /**
+     * Updates a {@code Task}'s name.
+     *
+     * @param task The {@code Task} to update.
+     * @param name The {@code Task}'s new name.
+     */
+    public void updateTaskName(Task task, String name) {
+        ContentValues values = new ContentValues();
+        values.put(TaskOpenHelper.COLUMN_TEXT, name);
+        database.update(TaskOpenHelper.TABLE_TASKS,
+                values,
+                // TODO shouldn't this be .COLUMN_ID????
+                TaskOpenHelper.COLUMN_SERVER_ID + " = " + WHERE_ARGS,
+                new String[]{String.valueOf(task.getLocalId())}
+        );
+    }
+
+    // TODO updating tasks can be individualized - see #updateTaskName(Task, String)
     public void updateTask(Task task) {
         ContentValues values = new ContentValues();
         values.put(TaskOpenHelper.COLUMN_SERVER_ID, task.getLocalId());
@@ -109,36 +130,52 @@ public class TaskDataSource {
         values.put(TaskOpenHelper.COLUMN_COMPLETED, complete);
         values.put(TaskOpenHelper.COLUMN_TEXT, task.getName());
 
-        database.update(TaskOpenHelper.TABLE_TASKS, values, TaskOpenHelper.COLUMN_SERVER_ID + " = ?",
-                new String[]{String.valueOf(task.getLocalId())});
+        database.update(TaskOpenHelper.TABLE_TASKS,
+                values,
+                // TODO shouldn't this be .COLUMN_ID????
+                TaskOpenHelper.COLUMN_SERVER_ID + " = " + WHERE_ARGS,
+                new String[]{String.valueOf(task.getLocalId())}
+        );
     }
 
+    /**
+     * Deletes a {@code Task} from the SQL database.
+     *
+     * @param task The {@code Task} to delete.
+     */
     public void deleteTask(Task task) {
-        String[] whereArgs = new String[1];
-        whereArgs[0] = Integer.toString(task.getLocalId());
-        database.delete(TaskOpenHelper.TABLE_TASKS, TaskOpenHelper.COLUMN_ID + " = ?", whereArgs);
+        String[] whereArgs = new String[]{Integer.toString(task.getLocalId())};
+        database.delete(TaskOpenHelper.TABLE_TASKS,
+                TaskOpenHelper.COLUMN_ID + " = " + WHERE_ARGS,
+                whereArgs);
     }
 
+    /**
+     * Returns a list of all the {@code Task}s in the SQL database.
+     *
+     * @return A list of all the {@code Task}s in the SQL database.
+     */
     public ArrayList<Task> getAllTasks() {
         ArrayList<Task> tasks = new ArrayList<Task>();
-
-        Cursor cursor = database.query(TaskOpenHelper.TABLE_TASKS,
-                allColumns, null, null,
-                null, null, null);
-
+        // A cursor over the entire database
+        Cursor cursor = database.query(TaskOpenHelper.TABLE_TASKS, allColumns, null, null, null, null, null);
+        // Add the tasks to the list, scanning row by row
         if (cursor.moveToFirst()) {
             tasks.add(cursorToTask(cursor));
-
             while (cursor.moveToNext()) {
                 tasks.add(cursorToTask(cursor));
             }
         }
-
         cursor.close();
-
         return tasks;
     }
 
+    /**
+     * A {@code Task} built from a single row in the SQL database.
+     *
+     * @param cursor The cursor over the result set must have all of the right columns.
+     * @return A {@code Task} built from a single row in the SQL database.
+     */
     private Task cursorToTask(Cursor cursor) {
         String name = cursor.getString(cursor.getColumnIndex(TaskOpenHelper.COLUMN_TEXT));
         int projectID = cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_PROJECT_SERVER_ID));
