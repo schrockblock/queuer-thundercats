@@ -36,9 +36,13 @@ public class ProjectActivity extends ActionBarActivity {
     private final String EDIT_TASK_DIALOG_TITLE = "Edit Task";
     private final String WARN_DIALOG_TITLE = "Warning";
 
+    /** The {@code Project} that dictates this Activity. */
     private Project project;
+
+    /** The server ID of the {@code Project} that dictates this Activity. */
     private int project_id;
-    private ArrayList<Task> tasks = new ArrayList<Task>();
+
+    /** The adapter that controls the list of {@code Task}s under the {@code Project}. */
     private ProjectAdapter adapter;
 
     // provides list of items for ActionBar drop-down
@@ -187,20 +191,15 @@ public class ProjectActivity extends ActionBarActivity {
         alertDialogBuilder.setTitle(EDIT_TASK_DIALOG_TITLE);
 
         View layout = getLayoutInflater().inflate(R.layout.dialog_edit_task, null);
-
         final EditText taskTitle = (EditText) layout.findViewById(R.id.task_name);
 
-        // set dialog message
         alertDialogBuilder
-                //.setMessage(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)))
                 .setCancelable(true)
                 .setView(layout)
                 .setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 clickedTask.setName(taskTitle.getText().toString());
-                                //adapter.notifyDataSetChanged();
-                                //refreshNoTasksWarning();
                             }
                         })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

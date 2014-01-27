@@ -26,26 +26,61 @@ public class TaskDataSource {
             TaskOpenHelper.COLUMN_CREATED,
             TaskOpenHelper.COLUMN_UPDATED};
 
+    /**
+     * Initializes the {@link com.thundercats.queuer.database.TaskOpenHelper}.
+     */
     public TaskDataSource(Context context) {
         dbHelper = new TaskOpenHelper(context);
     }
 
+    /**
+     * Initializes the {@code SQLiteDatabase}.
+     */
     public void open() throws SQLException {
         database = dbHelper.getWritableDatabase();
     }
 
+    /**
+     * Closes the {@link com.thundercats.queuer.database.TaskOpenHelper}.
+     */
     public void close() {
         dbHelper.close();
     }
 
-    public Task createTask(String text, int projectId, int serverId, int position, boolean completed) {
+    /**
+     * Creates a {@code ContentValues} that maps column names ({@code Task} fields)
+     * to new column values.
+     *
+     * @param text The name of the {@code Task}.
+     * @param projectId The server ID of the {@code Project} to which the {@code Task} belongs.
+     * @param serverId The server ID of the {@code Task}.
+     * @param position The position of the {@code Task}.
+     * @param completed Whether or not the {@code Task} is finished.
+     * @return The {@code ContentValues} object that describes this {@code Task}.
+     */
+    private ContentValues createContentValues(String text, int projectId, int serverId,
+                                              int position, boolean completed) {
         ContentValues values = new ContentValues();
         values.put(TaskOpenHelper.COLUMN_SERVER_ID, serverId);
         values.put(TaskOpenHelper.COLUMN_PROJECT_SERVER_ID, projectId);
         values.put(TaskOpenHelper.COLUMN_POSITION, position);
-        int complete = completed ? 1 : 0;
-        values.put(TaskOpenHelper.COLUMN_COMPLETED, complete);
+        values.put(TaskOpenHelper.COLUMN_COMPLETED, completed ? 1 : 0);
         values.put(TaskOpenHelper.COLUMN_TEXT, text);
+        return values;
+    }
+
+    /**
+     *
+     * @param text The name of the {@code Task}.
+     * @param projectId The server ID of the {@code Project} to which the {@code Task} belongs.
+     * @param serverId The server ID of the {@code Task}.
+     * @param position The position of the {@code Task}.
+     * @param completed Whether or not the {@code Task} is finished.
+     * @return
+     */
+    public Task createTask(String text, int projectId, int serverId, int position, boolean completed) {
+        ContentValues values = createContentValues(text, projectId, serverId, position, completed);
+
         long insertId = database.insert(TaskOpenHelper.TABLE_TASKS, null,
                 values);
         Cursor cursor = database.query(TaskOpenHelper.TABLE_TASKS,
