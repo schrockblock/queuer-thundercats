@@ -10,6 +10,7 @@ import android.util.Log;
  */
 public class ProjectOpenHelper extends SQLiteOpenHelper {
 
+    // PROJECT FIELDS
     public static final String TABLE_PROJECTS = "projects";
     public static final String COLUMN_LOCAL_ID = "_id";
     public static final String COLUMN_SERVER_ID = "id";

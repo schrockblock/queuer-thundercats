@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:serverId="@+serverId/tv_title"
+        android:id="@+id/tv_title"
         style="@style/List_TextView"/>
 
 </LinearLayout>

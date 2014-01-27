@@ -125,9 +125,9 @@ public class ProjectDataSource {
         ContentValues values = createContentValues(
                                 project.getTitle(),
                                 project.getColor(),
-                                project.getServerId(),
-                                project.getDateCreated(),
-                                project.getDateUpdated()
+                                project.getId(),
+                                project.getCreated_at(),
+                                project.getUpdated_at()
         );
 
         database.update(
@@ -192,7 +192,7 @@ public class ProjectDataSource {
     private Project cursorToProject(Cursor cursor) {
         Project project = new Project();
         project.setLocalId(cursor.getInt(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_LOCAL_ID)));
-        project.setServerId(cursor.getInt(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_SERVER_ID)));
+        project.setId(cursor.getInt(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_SERVER_ID)));
         project.setColor(cursor.getInt(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_COLOR)));
         project.setTitle(cursor.getString(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_TITLE)));
         return project;

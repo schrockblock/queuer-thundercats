@@ -34,13 +34,18 @@ public class Project implements Parcelable {
     /** The key for storing {@code Project}s as {@code Intent} extras. */
     public static final String INTENT_KEY = "project";
 
+
+    //////////////////////
+    /// PROJECT FIELDS ///
+    //////////////////////
+
     /** Whether this project is hidden. */
     private boolean isHidden;
 
-    /** This project's unique ID. Useful since users can move projects around. */
-    private int serverId;
+    /** This project's unique server ID. */
+    private int id;
 
-    /** */
+    /** This project's unique local ID. */
     private int localId;
 
     /** This project's title. */
@@ -50,10 +55,10 @@ public class Project implements Parcelable {
     private int color;
 
     /** When the project was created. */
-    private Date dateCreated;
+    private Date created_at;
 
     /** When the project was last updated. */
-    private Date dateUpdated;
+    private Date updated_at;
 
     /** Constructor for setting project fields. */
     public Project() {}
@@ -61,61 +66,85 @@ public class Project implements Parcelable {
     /**
      * Constructs a new Project.
      *
-     * @param serverId This project's server ID.
+     * @param id This project's server ID.
      * @param title This project's title.
      * @param color This project's color.
      */
-    public Project(Context context, int serverId, String title, int color) {
-        this.serverId = serverId;
+    public Project(Context context, int id, String title, int color) {
+        this.id = id;
         this.title = title;
         this.color = color;
 
         ProjectDataSource projectDataSource = new ProjectDataSource(context);
         projectDataSource.open();
-        localId = projectDataSource.createProject(title, 0, serverId, new Date(), new Date()).localId;
+        localId = projectDataSource.createProject(title, 0, id, new Date(), new Date()).localId;
         projectDataSource.close();
     }
 
-    public Date getDateCreated() {
-        return dateCreated;
+    /**
+     * Returns the {@code Date} when this {@code Project} was created.
+     * @return The {@code Date} when this {@code Project} was created.
+     */
+    public Date getCreated_at() {
+        return created_at;
     }
 
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
+    /**
+     * Sets the {@code Date} when this {@code Project} was created.
+     * @param created_at The {@code Date} when this {@code Project} was created.
+     */
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
     }
 
-    public Date getDateUpdated() {
-        return dateUpdated;
+    /**
+     * Returns the {@code Date} when this {@code Project} was last updated.
+     * @return The {@code Date} when this {@code Project} was last updated.
+     */
+    public Date getUpdated_at() {
+        return updated_at;
     }
 
-    public void setDateUpdated(Date dateUpdated) {
-        this.dateUpdated = dateUpdated;
+    /**
+     * Sets the {@code Date} when this {@code Project} was last updated.
+     * @param updated_at The {@code Date} when this {@code Project} was last updated.
+     */
+    public void setUpdated_at(Date updated_at) {
+        this.updated_at = updated_at;
     }
 
+    /**
+     * Returns this {@code Project}'s local ID.
+     * @return This {@code Project}'s local ID.
+     */
     public int getLocalId() {
         return localId;
     }
 
+    /**
+     * Sets this {@code Project}'s local ID.
+     * @param localId This {@code Project}'s local ID.
+     */
     public void setLocalId(int localId) {
         this.localId = localId;
     }
 
     /**
-     * Returns this project's ID.
+     * Returns this project's server ID.
      *
-     * @return This project's ID.
+     * @return This project's server ID.
      */
-    public int getServerId() {
-        return serverId;
+    public int getId() {
+        return id;
     }
 
     /**
-     * Sets this project's ID.
+     * Sets this project's server ID.
      *
-     * @param serverId The new ID.
+     * @param id The new server ID.
      */
-    public void setServerId(int serverId) {
-        this.serverId = serverId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     /**
@@ -154,10 +183,18 @@ public class Project implements Parcelable {
         this.color = color;
     }
 
+    /**
+     * Returns whether or not this {@code Project} is hidden.
+     * @return Whether or not this {@code Project} is hidden.
+     */
     public boolean isHidden() {
         return isHidden;
     }
 
+    /**
+     * Sets whether or not this {@code Project} is hidden.
+     * @param isHidden Whether or not this {@code Project} is hidden.
+     */
     public void setHidden(boolean isHidden) {
         this.isHidden = isHidden;
     }
@@ -170,7 +207,7 @@ public class Project implements Parcelable {
      */
     @Override
     public boolean equals(Object otherProject) {
-        return ((Project) otherProject).getServerId() == getServerId();
+        return ((Project) otherProject).getId() == getId();
     }
 
     /**
@@ -193,7 +230,7 @@ public class Project implements Parcelable {
      */
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(serverId);
+        parcel.writeInt(id);
         parcel.writeString(title);
         parcel.writeInt(color);
         parcel.writeInt(isHidden ? 1 : 0);
@@ -207,7 +244,7 @@ public class Project implements Parcelable {
      * @see com.thundercats.queuer.models.Project#CREATOR
      */
     public Project(Parcel in) {
-        serverId = in.readInt();
+        id = in.readInt();
         title = in.readString();
         color = in.readInt();
         isHidden = (in.readInt() == 1);

@@ -10,23 +10,23 @@
     tools:context="com.demo.queuer.activities.LoginActivity$PlaceholderFragment">
 
     <EditText
-        android:serverId="@+serverId/et_username"
+        android:id="@+id/et_username"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
     <EditText
-        android:serverId="@+serverId/et_password"
+        android:id="@+id/et_password"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
     <CheckBox
-        android:serverId="@+serverId/cb_remember"
+        android:id="@+id/cb_remember"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/remember_me"/>
 
     <Button
-        android:serverId="@+serverId/btn_login"
+        android:id="@+id/btn_login"
         android:text="@string/login_button"
         android:layout_gravity="center"
         android:layout_width="wrap_content"

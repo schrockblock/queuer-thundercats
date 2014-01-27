@@ -71,7 +71,7 @@ public class ProjectActivity extends ActionBarActivity {
 
         // Get project from Intent
         project = getIntent().getParcelableExtra(Project.INTENT_KEY);
-        project_id = project.getServerId();
+        project_id = project.getId();
 
         // Set the action bar to display the project number.
         ActionBar actionBar = getSupportActionBar();
@@ -239,7 +239,7 @@ public class ProjectActivity extends ActionBarActivity {
                                 }
                                 task.setName(name);
                                 task.setProject_id(project_id);
-                                tasks.add(0, task);
+                                adapter.add(task);
                                 adapter.notifyDataSetChanged();
                                 refreshNoTasksWarning();
                             }

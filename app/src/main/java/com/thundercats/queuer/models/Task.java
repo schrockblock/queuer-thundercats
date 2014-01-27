@@ -11,10 +11,10 @@ import java.util.Date;
  */
 public class Task {
 
+    private int project_id;
     private int localId;
     private int id;
     private String name;
-    private int project_id;
     private int position;
     private boolean finished;
     private Date created_at;
@@ -22,7 +22,8 @@ public class Task {
 
     public Task() {}
 
-    public Task(Context context, int id, String name, int project_id, int position, boolean finished, Date created_at, Date updated_at) {
+    public Task(Context context, int id, String name, int project_id, int position,
+                boolean finished, Date created_at, Date updated_at) {
         this.id = id;
         this.name = name;
         this.project_id = project_id;
@@ -99,5 +100,15 @@ public class Task {
 
     public void setUpdated_at(Date updated_at) {
         this.updated_at = updated_at;
+    }
+
+    /**
+     * Tasks are equal if they have the same server IDs.
+     * @param o The {@code Task} being compared to this {@code Task}.
+     * @return True if the two {@code Task}s have the same server IDs.
+     */
+    @Override
+    public boolean equals(Object o) {
+        return ((Task)o).getId() == getId();
     }
 }

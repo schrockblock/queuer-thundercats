@@ -4,7 +4,7 @@
 android:layout_width="match_parent"
 android:layout_height="match_parent" >
 <EditText
-    android:serverId="@+serverId/task"
+    android:id="@+id/task"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:inputType="textCapSentences"
@@ -15,10 +15,10 @@ android:layout_height="match_parent" >
     <requestFocus />
 </EditText>
 <EditText
-    android:serverId="@+serverId/position"
+    android:id="@+id/position"
     android:layout_width="50dp"
     android:layout_height="wrap_content"
     android:inputType="number"
-    android:layout_below="@+serverId/task"
+    android:layout_below="@+id/task"
     android:text="0"/>
 </RelativeLayout>

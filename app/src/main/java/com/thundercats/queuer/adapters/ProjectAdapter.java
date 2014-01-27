@@ -48,22 +48,48 @@ public class ProjectAdapter extends BaseAdapter implements RearrangementListener
         this.tasks = tasks;
     }
 
+    /**
+     * Removes a {@code Task}.
+     * @param position The index of the {@code Task} to be removed.
+     */
     public void remove(int position) {
         tasks.remove(position);
         notifyDataSetChanged();
     }
 
+    /**
+     * Adds a {@code Task}.
+     * @param task The {@code Task} to append.
+     */
+    public void add(Task task) {
+        if (!tasks.contains(task)) tasks.add(task);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Inserts a {@code Task}.
+     * @param task The {@code Task} to insert.
+     * @param position The index where the {@code Task} will be inserted.
+     */
     public void insert(Task task, int position) {
         tasks.add(position, task);
         notifyDataSetChanged();
     }
 
+    /**
+     * Returns true since all items are enabled (i.e., there are no dividers).
+     * @return True - all items are enabled.
+     */
     @Override
     public boolean areAllItemsEnabled() {
-        // all items are enabled. no dividers.
         return true;
     }
 
+    /**
+     * Returns true since all {@code Task}s are enabled.
+     * @param i The index of the {@code Task} in question.
+     * @return True - all {@code Task}s are enabled.
+     */
     @Override
     public boolean isEnabled(int i) {
         return true;
