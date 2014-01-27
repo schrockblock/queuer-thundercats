@@ -51,15 +51,15 @@ public class ProjectDataSource {
     }
 
     /**
-     * Creates a {@code ContentValues} that maps column names ({@code Project} fields)
-     * to new column values.
+     * Returns a row of cells that defines a particular {@code Project}.
      *
      * @param title    The title of the {@code Project}.
      * @param color    The color of the {@code Project}.
      * @param serverId The server ID of the {@code Project}.
      * @param created  When the {@code Project} was created.
      * @param updated  When the {@code Project} was last updated.
-     * @return The {@code ContentValues} object that describes this {@code Project}.
+     * @return The {@code ContentValues} object that maps column names ({@code Project} fields)
+     * to new column values.
      */
     private ContentValues createContentValues(String title, int color, int serverId, Date created, Date updated) {
         ContentValues values = new ContentValues();
@@ -76,11 +76,12 @@ public class ProjectDataSource {
 
     /**
      * Creates a project from ContentValues and a Cursor.
-     * @param title The title of the {@code Project}.
-     * @param color The color of the {@code Project}.
+     *
+     * @param title    The title of the {@code Project}.
+     * @param color    The color of the {@code Project}.
      * @param serverId The server ID of the {@code Project}.
-     * @param created When the {@code Project} was created.
-     * @param updated When the {@code Project} was last updated.
+     * @param created  When the {@code Project} was created.
+     * @param updated  When the {@code Project} was last updated.
      * @return A project from ContentValues and a Cursor.
      */
     public Project createProject(String title, int color, int serverId, Date created, Date updated) {
@@ -118,16 +119,17 @@ public class ProjectDataSource {
 
     /**
      * Updates the {@link com.thundercats.queuer.models.Project}'s fields.
+     *
      * @param project The project to update.
      */
     public void updateProject(Project project) {
         // TODO may not be necessary to overwrite all fields...
         ContentValues values = createContentValues(
-                                project.getTitle(),
-                                project.getColor(),
-                                project.getId(),
-                                project.getCreated_at(),
-                                project.getUpdated_at()
+                project.getTitle(),
+                project.getColor(),
+                project.getId(),
+                project.getCreated_at(),
+                project.getUpdated_at()
         );
 
         database.update(
@@ -145,18 +147,20 @@ public class ProjectDataSource {
      * Deletes all rows whose local IDs match that of project's.
      * In theory, only one project should be deleted since
      * no two projects should have the same local ID.
+     *
      * @param project The tasks associated with project are not deleted.
      */
     public void deleteProject(Project project) {
         long id = project.getLocalId();
         Log.d(this.getClass().getName(), "Deleting Project w/ Local ID: " + id);
         database.delete(ProjectOpenHelper.TABLE_PROJECTS,
-                        ProjectOpenHelper.COLUMN_LOCAL_ID + " = " + id,
-                        null);
+                ProjectOpenHelper.COLUMN_LOCAL_ID + " = " + id,
+                null);
     }
 
     /**
      * Returns a list of all {@link Project}s in the database.
+     *
      * @return A list of all {@link Project}s in the database.
      */
     public ArrayList<Project> getAllProjects() {
@@ -185,6 +189,7 @@ public class ProjectDataSource {
 
     /**
      * Returns a {@link Project} parsed from the given {@code Cursor}.
+     *
      * @param cursor Reads the cells in the current row and writes
      *               them into a new {@code Project}'s fields.
      * @return A {@link Project} parsed from the given {@code Cursor}.

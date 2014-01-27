@@ -236,8 +236,7 @@ public class ProjectActivity extends ActionBarActivity {
                                     showWarningDialog("Task must have a name.");
                                     return;
                                 }
-                                Date date = new Date();
-                                Task task = new Task(ProjectActivity.this, name, project_id, 0, date);
+                                Task task = new Task(ProjectActivity.this, name, project_id, 0);
                                 adapter.add(task);
                                 refreshNoTasksWarning();
                             }

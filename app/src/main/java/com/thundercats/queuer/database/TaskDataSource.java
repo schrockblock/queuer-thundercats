@@ -17,7 +17,7 @@ public class TaskDataSource {
     // Database fields
     private SQLiteDatabase database;
     private TaskOpenHelper dbHelper;
-    private String[] allColumns = { TaskOpenHelper.COLUMN_ID,
+    private String[] allColumns = {TaskOpenHelper.COLUMN_ID,
             TaskOpenHelper.COLUMN_SERVER_ID,
             TaskOpenHelper.COLUMN_PROJECT_SERVER_ID,
             TaskOpenHelper.COLUMN_TEXT,
@@ -48,15 +48,15 @@ public class TaskDataSource {
     }
 
     /**
-     * Creates a {@code ContentValues} that maps column names ({@code Task} fields)
-     * to new column values.
+     * Returns a row of cells that defines a particular {@code Task}
      *
-     * @param text The name of the {@code Task}.
+     * @param text      The name of the {@code Task}.
      * @param projectId The server ID of the {@code Project} to which the {@code Task} belongs.
-     * @param serverId The server ID of the {@code Task}.
-     * @param position The position of the {@code Task}.
+     * @param serverId  The server ID of the {@code Task}.
+     * @param position  The position of the {@code Task}.
      * @param completed Whether or not the {@code Task} is finished.
-     * @return The {@code ContentValues} object that describes this {@code Task}.
+     * @return The {@code ContentValues} object that maps column names ({@code Task} fields)
+     * to new column values.
      */
     private ContentValues createContentValues(String text, int projectId, int serverId,
                                               int position, boolean completed) {
@@ -70,29 +70,37 @@ public class TaskDataSource {
     }
 
     /**
-     *
-     * @param text The name of the {@code Task}.
+     * Creates a row of cells from the given {@code Task} parameters.
+     * Inserts the row into the database.
+     * Get a {@code Cursor} over the inserted row.
+     * @param text      The name of the {@code Task}.
      * @param projectId The server ID of the {@code Project} to which the {@code Task} belongs.
-     * @param serverId The server ID of the {@code Task}.
-     * @param position The position of the {@code Task}.
+     * @param serverId  The server ID of the {@code Task}.
+     * @param position  The position of the {@code Task}.
      * @param completed Whether or not the {@code Task} is finished.
      * @return
      */
     public Task createTask(String text, int projectId, int serverId, int position, boolean completed) {
-        ContentValues values = createContentValues(text, projectId, serverId, position, completed);
-
-        long insertId = database.insert(TaskOpenHelper.TABLE_TASKS, null,
-                values);
-        Cursor cursor = database.query(TaskOpenHelper.TABLE_TASKS,
-                allColumns, TaskOpenHelper.COLUMN_ID + " = " + insertId, null,
-                null, null, null);
+        // create the row of cells
+        ContentValues taskRow = createContentValues(text, projectId, serverId, position, completed);
+        // insert the row of cells
+        long insertId = database.insert(TaskOpenHelper.TABLE_TASKS, null, taskRow);
+        // get a cursor over the inserted row
+        Cursor cursor = database.query(
+                // the table name to compile the query against
+                TaskOpenHelper.TABLE_TASKS,
+                // a list of which columns to return
+                allColumns,
+                // WHERE clause - filter declaring which rows to return
+                TaskOpenHelper.COLUMN_ID + " = " + insertId,
+                null, null, null, null);
         cursor.moveToFirst();
         Task newTask = cursorToTask(cursor);
         cursor.close();
         return newTask;
     }
 
-    public void updateTask(Task task){
+    public void updateTask(Task task) {
         ContentValues values = new ContentValues();
         values.put(TaskOpenHelper.COLUMN_SERVER_ID, task.getLocalId());
         values.put(TaskOpenHelper.COLUMN_PROJECT_SERVER_ID, task.getProject_id());
@@ -118,10 +126,10 @@ public class TaskDataSource {
                 allColumns, null, null,
                 null, null, null);
 
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             tasks.add(cursorToTask(cursor));
 
-            while (cursor.moveToNext()){
+            while (cursor.moveToNext()) {
                 tasks.add(cursorToTask(cursor));
             }
         }
@@ -132,13 +140,12 @@ public class TaskDataSource {
     }
 
     private Task cursorToTask(Cursor cursor) {
-        Task task = new Task();
-        task.setId(cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_SERVER_ID)));
-        task.setLocalId(cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_ID)));
-        task.setProject_id(cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_PROJECT_SERVER_ID)));
-        task.setName(cursor.getString(cursor.getColumnIndex(TaskOpenHelper.COLUMN_TEXT)));
-        task.setPosition(cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_POSITION)));
-        task.setFinished(1 == cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_COMPLETED)));
-        return task;
+        String name = cursor.getString(cursor.getColumnIndex(TaskOpenHelper.COLUMN_TEXT));
+        int projectID = cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_PROJECT_SERVER_ID));
+        int position = cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_POSITION));
+        int serverID = cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_SERVER_ID));
+        int localID = cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_ID));
+        boolean finished = 1 == cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_COMPLETED));
+        return new Task(name, projectID, position, serverID, localID, finished);
     }
 }
