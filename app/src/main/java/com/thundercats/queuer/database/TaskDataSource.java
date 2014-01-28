@@ -5,10 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v7.appcompat.R;
 
 import com.thundercats.queuer.models.Task;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by eschrock on 1/21/14.
@@ -106,7 +108,7 @@ public class TaskDataSource {
     /**
      * Updates a {@code Task}'s name.
      *
-     * @param task The {@code Task} to update.
+     * @param task The {@code Task} to update; its local ID is used to find its row in the database.
      * @param name The {@code Task}'s new name.
      */
     public void updateTaskName(Task task, String name) {
@@ -120,15 +122,73 @@ public class TaskDataSource {
         );
     }
 
-    // TODO updating tasks can be individualized - see #updateTaskName(Task, String)
+    /**
+     * Updates a {@code Task}'s position.
+     *
+     * @param task     The {@code Task} to update; its local ID is used to find its row in the database.
+     * @param position The {@code Task}'s new position.
+     */
+    public void updateTaskPosition(Task task, int position) {
+        ContentValues values = new ContentValues();
+        values.put(TaskOpenHelper.COLUMN_POSITION, position);
+        database.update(TaskOpenHelper.TABLE_TASKS,
+                values,
+                // TODO shouldn't this be .COLUMN_ID????
+                TaskOpenHelper.COLUMN_SERVER_ID + " = " + WHERE_ARGS,
+                new String[]{String.valueOf(task.getLocalId())}
+        );
+    }
+
+    /**
+     * Updates a {@code Task}'s finished status.
+     *
+     * @param task     The {@code Task} to update; its local ID is used to find its row in the database.
+     * @param finished Whether or not the {@code Task} is finished.
+     */
+    public void updateTaskFinished(Task task, boolean finished) {
+        ContentValues values = new ContentValues();
+        values.put(TaskOpenHelper.COLUMN_COMPLETED, finished ? 1 : 0);
+        database.update(TaskOpenHelper.TABLE_TASKS,
+                values,
+                // TODO shouldn't this be .COLUMN_ID????
+                TaskOpenHelper.COLUMN_SERVER_ID + " = " + WHERE_ARGS,
+                new String[]{String.valueOf(task.getLocalId())}
+        );
+    }
+
+    /**
+     * Updates the date when the {@code Task} was last updated.
+     *
+     * @param task        The {@code Task} to update;
+     *                    its local ID is used to find its row in the database.
+     * @param lastUpdated When the {@code Task} was last updated.
+     *                    The date is stored as a string.
+     */
+    public void updateTaskLastUpdated(Task task, Date lastUpdated) {
+        ContentValues values = new ContentValues();
+        values.put(TaskOpenHelper.COLUMN_UPDATED, lastUpdated.getTime());
+        database.update(TaskOpenHelper.TABLE_TASKS,
+                values,
+                // TODO shouldn't this be .COLUMN_ID????
+                TaskOpenHelper.COLUMN_SERVER_ID + " = " + WHERE_ARGS,
+                new String[]{String.valueOf(task.getLocalId())}
+        );
+    }
+
+    /**
+     * Updates a task.
+     *
+     * @param task Uses getters to update a {@code Task}'s row in the database.
+     */
     public void updateTask(Task task) {
         ContentValues values = new ContentValues();
         values.put(TaskOpenHelper.COLUMN_SERVER_ID, task.getLocalId());
         values.put(TaskOpenHelper.COLUMN_PROJECT_SERVER_ID, task.getProject_id());
-        values.put(TaskOpenHelper.COLUMN_POSITION, task.getPosition());
-        int complete = task.isFinished() ? 1 : 0;
-        values.put(TaskOpenHelper.COLUMN_COMPLETED, complete);
         values.put(TaskOpenHelper.COLUMN_TEXT, task.getName());
+        values.put(TaskOpenHelper.COLUMN_COMPLETED, task.isFinished() ? 1 : 0);
+        values.put(TaskOpenHelper.COLUMN_POSITION, task.getPosition());
+        values.put(TaskOpenHelper.COLUMN_CREATED, task.getCreated_at().getTime());
+        values.put(TaskOpenHelper.COLUMN_UPDATED, task.getUpdated_at().getTime());
 
         database.update(TaskOpenHelper.TABLE_TASKS,
                 values,
@@ -177,12 +237,17 @@ public class TaskDataSource {
      * @return A {@code Task} built from a single row in the SQL database.
      */
     private Task cursorToTask(Cursor cursor) {
-        String name = cursor.getString(cursor.getColumnIndex(TaskOpenHelper.COLUMN_TEXT));
-        int projectID = cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_PROJECT_SERVER_ID));
-        int position = cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_POSITION));
-        int serverID = cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_SERVER_ID));
         int localID = cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_ID));
+        int serverID = cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_SERVER_ID));
+        int projectID = cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_PROJECT_SERVER_ID));
+        String name = cursor.getString(cursor.getColumnIndex(TaskOpenHelper.COLUMN_TEXT));
         boolean finished = 1 == cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_COMPLETED));
-        return new Task(name, projectID, position, serverID, localID, finished);
+        int position = cursor.getInt(cursor.getColumnIndex(TaskOpenHelper.COLUMN_POSITION));
+        String created = cursor.getString(cursor.getColumnIndex(TaskOpenHelper.COLUMN_CREATED));
+        String updated = cursor.getString(cursor.getColumnIndex(TaskOpenHelper.COLUMN_UPDATED));
+        Date created_at = (created == null) ? null : new Date(Long.valueOf(created));
+        Date updated_at = (updated == null) ? null : new Date(Long.valueOf(updated));
+        return new Task(localID, serverID, projectID, name, finished, position, created_at, updated_at);
     }
+
 }

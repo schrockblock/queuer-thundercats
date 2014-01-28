@@ -127,7 +127,7 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener, P
     }
 
     /**
-     * Refreshes the visible projects.
+     * Causes views to refresh themselves (i.e., getView is called).
      */
     @Override
     public void notifyDataSetChanged() {
@@ -202,6 +202,11 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener, P
         return visibleProjects.size();
     }
 
+    /**
+     * This method only returns items/projects that are visible.
+     * @param i
+     * @return
+     */
     @Override
     public Project getItem(int i) {
         return visibleProjects.get(i);

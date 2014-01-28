@@ -28,9 +28,6 @@ public class Project implements Parcelable {
                 }
             };
 
-    /** The key for storing {@code Project} IDs as {@code Intent} extras. */
-    public static final String PROJECT_ID_INTENT_KEY = "project_id";
-
     /** The key for storing {@code Project}s as {@code Intent} extras. */
     public static final String INTENT_KEY = "project";
 

@@ -65,15 +65,16 @@ public class Task {
      * @param finished   Whether or not this {@code Task} is finished.
      * @see com.thundercats.queuer.database.TaskDataSource#cursorToTask(android.database.Cursor)
      */
-    public Task(String name, int project_id, int position, int id, int localId, boolean finished) {
-        this.name = name;
-        this.project_id = project_id;
-        this.position = position;
-        this.id = id;
+    public Task(int localId, int id, int project_id, String name, boolean finished,
+                int position, Date created_at, Date updated_at) {
         this.localId = localId;
+        this.id = id;
+        this.project_id = project_id;
+        this.name = name;
         this.finished = finished;
-        this.created_at = new Date();
-        this.updated_at = created_at;
+        this.position = position;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
     }
 
     /**
@@ -119,15 +120,6 @@ public class Task {
      */
     public int getId() {
         return id;
-    }
-
-    /**
-     * Sets this {@code Task}'s server ID.
-     *
-     * @param id The new server ID of this {@code Task}.
-     */
-    public void setId(int id) {
-        this.id = id;
     }
 
     /**
@@ -187,6 +179,10 @@ public class Task {
      */
     public void setPosition(int position) {
         this.position = position;
+        TaskDataSource dataSource = new TaskDataSource(context);
+        dataSource.open();
+        dataSource.updateTaskPosition(this, position);
+        dataSource.close();
     }
 
     /**
@@ -205,6 +201,10 @@ public class Task {
      */
     public void setFinished(boolean finished) {
         this.finished = finished;
+        TaskDataSource dataSource = new TaskDataSource(context);
+        dataSource.open();
+        dataSource.updateTaskFinished(this, finished);
+        dataSource.close();
     }
 
     /**
@@ -241,6 +241,10 @@ public class Task {
      */
     public void setUpdated_at(Date updated_at) {
         this.updated_at = updated_at;
+        TaskDataSource dataSource = new TaskDataSource(context);
+        dataSource.open();
+        dataSource.updateTaskLastUpdated(this, updated_at);
+        dataSource.close();
     }
 
     /**
