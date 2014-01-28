@@ -68,21 +68,20 @@ public class ProjectDataSource {
      * @return The {@code ContentValues} object that maps column names ({@code Project} fields)
      * to new column values.
      */
-    private ContentValues createContentValues(String title, int color, int serverId, Date created, Date updated) {
+    private ContentValues createContentValues(String title, int color, boolean isHidden, int serverId, Date created, Date updated) {
         ContentValues values = new ContentValues();
         values.put(ProjectOpenHelper.COLUMN_SERVER_ID, serverId);
         values.put(ProjectOpenHelper.COLUMN_COLOR, color);
-        values.put(ProjectOpenHelper.COLUMN_TITLE, title);
-        values.put(ProjectOpenHelper.COLUMN_UPDATED, updated.getTime());
         values.put(ProjectOpenHelper.COLUMN_CREATED, created.getTime());
-        // Projects are not hidden by default.
-        int hidden = 0;
-        values.put(ProjectOpenHelper.COLUMN_HIDDEN, hidden);
+        values.put(ProjectOpenHelper.COLUMN_UPDATED, updated.getTime());
+        values.put(ProjectOpenHelper.COLUMN_HIDDEN, isHidden ? 1 : 0);
+        values.put(ProjectOpenHelper.COLUMN_TITLE, title);
         return values;
     }
 
     /**
-     * Creates a project from ContentValues and a Cursor.
+     * Writes a {@code Project} to the database.
+     * Creates a {@code Project} from ContentValues and a Cursor.
      *
      * @param title    The title of the {@code Project}.
      * @param color    The color of the {@code Project}.
@@ -91,16 +90,16 @@ public class ProjectDataSource {
      * @param updated  When the {@code Project} was last updated.
      * @return A project from ContentValues and a Cursor.
      */
-    public Project createProject(String title, int color, int serverId, Date created, Date updated) {
+    public Project createProject(String title, int color, boolean isHidden, int serverId, Date created, Date updated) {
 
         // Create the content values given all the passed in parameters
-        ContentValues values = createContentValues(title, color, serverId, created, updated);
+        ContentValues values = createContentValues(title, color, isHidden, serverId, created, updated);
 
         // Get the insert ID for the content values
         long insertId = database.insert(ProjectOpenHelper.TABLE_PROJECTS, null,
                 values);
 
-        // Create a Cursor object over all rows whose local IDs match insertId
+        // Get a Cursor over the row that was just inserted
         Cursor cursor = database.query(
                 // the table to compile the query against
                 ProjectOpenHelper.TABLE_PROJECTS,
@@ -125,37 +124,11 @@ public class ProjectDataSource {
     }
 
     /**
-     * Updates the {@link com.thundercats.queuer.models.Project}'s fields.
+     * Deletes all rows whose local IDs match that of {@code Project}'s.
+     * In theory, only one {@code Project} should be deleted since
+     * no two {@code Project}s should have the same local ID.
      *
-     * @param project The project to update.
-     */
-    public void updateProject(Project project) {
-        // TODO may not be necessary to overwrite all fields...
-        ContentValues values = createContentValues(
-                project.getTitle(),
-                project.getColor(),
-                project.getId(),
-                project.getCreated_at(),
-                project.getUpdated_at()
-        );
-
-        database.update(
-                // the table to update in
-                ProjectOpenHelper.TABLE_PROJECTS,
-                // a map from column names to new column values
-                values,
-                // whereClause - overwrite where a the ID column is whereArgs
-                ProjectOpenHelper.COLUMN_LOCAL_ID + " = " + WHERE_ARGS,
-                // whereArgs - overwrite the row that corresponds to a project's local ID
-                new String[]{String.valueOf(project.getLocalId())});
-    }
-
-    /**
-     * Deletes all rows whose local IDs match that of project's.
-     * In theory, only one project should be deleted since
-     * no two projects should have the same local ID.
-     *
-     * @param project The tasks associated with project are not deleted.
+     * @param project The {@code Task}s associated with {@code project} are not deleted.
      */
     public void deleteProject(Project project) {
         long id = project.getLocalId();
@@ -166,9 +139,9 @@ public class ProjectDataSource {
     }
 
     /**
-     * Returns a list of all {@link Project}s in the database.
+     * Returns a list of all {@code Project}s in the database.
      *
-     * @return A list of all {@link Project}s in the database.
+     * @return A list of all {@code Project}s in the database.
      */
     public ArrayList<Project> getAllProjects() {
 
@@ -195,18 +168,88 @@ public class ProjectDataSource {
     }
 
     /**
-     * Returns a {@link Project} parsed from the given {@code Cursor}.
+     * Returns a {@code Project} parsed from the given {@code Cursor}.
      *
      * @param cursor Reads the cells in the current row and writes
      *               them into a new {@code Project}'s fields.
-     * @return A {@link Project} parsed from the given {@code Cursor}.
+     * @return A {@code Project} parsed from the given {@code Cursor}.
      */
     private Project cursorToProject(Cursor cursor) {
-        Project project = new Project();
-        project.setLocalId(cursor.getInt(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_LOCAL_ID)));
-        project.setId(cursor.getInt(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_SERVER_ID)));
-        project.setColor(cursor.getInt(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_COLOR)));
-        project.setTitle(cursor.getString(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_TITLE)));
-        return project;
+        int localID = cursor.getInt(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_LOCAL_ID));
+        int serverID = cursor.getInt(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_SERVER_ID));
+        String title = cursor.getString(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_TITLE));
+        int color = cursor.getInt(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_COLOR));
+        boolean isHidden = cursor.getInt(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_HIDDEN)) == 1;
+        Date created = new Date(cursor.getLong(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_CREATED)));
+        Date updated = new Date(cursor.getLong(cursor.getColumnIndex(ProjectOpenHelper.COLUMN_UPDATED)));
+        return new Project(localID, serverID, title, color, isHidden, created, updated);
     }
+
+    /**
+     * Rewrites a project to database with a new title.
+     *
+     * @param project The {@code Project} to update.
+     * @param title   The {@code Project}'s new title.
+     */
+    public void updateProjectTitle(Project project, String title) {
+        ContentValues values = new ContentValues();
+        values.put(ProjectOpenHelper.COLUMN_TITLE, title);
+        update(project, values);
+    }
+
+    /**
+     * Rewrites a project to database with a new color.
+     *
+     * @param project The {@code Project} to update.
+     * @param color   The {@code Project}'s new color.
+     */
+    public void updateProjectColor(Project project, int color) {
+        ContentValues values = new ContentValues();
+        values.put(ProjectOpenHelper.COLUMN_COLOR, color);
+        update(project, values);
+    }
+
+    /**
+     * Rewrites a project to database with a new hidden status.
+     *
+     * @param project  The {@code Project} to update.
+     * @param isHidden Whether or not this {@code Project} is hidden now.
+     */
+    public void updateProjectHidden(Project project, boolean isHidden) {
+        ContentValues values = new ContentValues();
+        values.put(ProjectOpenHelper.COLUMN_HIDDEN, isHidden ? 1 : 0);
+        update(project, values);
+    }
+
+    /**
+     * Updates a {@code Project}'s values.
+     *
+     * @param project The {@code Project} to update.
+     * @param values  The content values (map) to write.
+     */
+    private void update(Project project, ContentValues values) {
+        database.update(ProjectOpenHelper.TABLE_PROJECTS, values,
+                // whereClause - overwrite where a the ID column is whereArgs
+                ProjectOpenHelper.COLUMN_LOCAL_ID + " = " + WHERE_ARGS,
+                // whereArgs - overwrite the row that corresponds to a project's local ID
+                new String[]{String.valueOf(project.getLocalId())});
+    }
+
+    /**
+     * Updates the {@code Project}'s fields.
+     *
+     * @param project The {@code Project} to update.
+     */
+    public void updateProject(Project project) {
+        ContentValues values = createContentValues(
+                project.getTitle(),
+                project.getColor(),
+                project.isHidden(),
+                project.getId(),
+                project.getCreated_at(),
+                project.getUpdated_at()
+        );
+        update(project, values);
+    }
+
 }

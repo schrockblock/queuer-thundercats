@@ -122,12 +122,7 @@ public class TaskDataSource {
     public void updateTaskName(Task task, String name) {
         ContentValues values = new ContentValues();
         values.put(TaskOpenHelper.COLUMN_TEXT, name);
-        database.update(TaskOpenHelper.TABLE_TASKS,
-                values,
-                // TODO shouldn't this be .COLUMN_ID????
-                TaskOpenHelper.COLUMN_SERVER_ID + " = " + WHERE_ARGS,
-                new String[]{String.valueOf(task.getLocalId())}
-        );
+        update(task, values);
     }
 
     /**
@@ -139,12 +134,7 @@ public class TaskDataSource {
     public void updateTaskPosition(Task task, int position) {
         ContentValues values = new ContentValues();
         values.put(TaskOpenHelper.COLUMN_POSITION, position);
-        database.update(TaskOpenHelper.TABLE_TASKS,
-                values,
-                // TODO shouldn't this be .COLUMN_ID????
-                TaskOpenHelper.COLUMN_SERVER_ID + " = " + WHERE_ARGS,
-                new String[]{String.valueOf(task.getLocalId())}
-        );
+        update(task, values);
     }
 
     /**
@@ -156,12 +146,7 @@ public class TaskDataSource {
     public void updateTaskFinished(Task task, boolean finished) {
         ContentValues values = new ContentValues();
         values.put(TaskOpenHelper.COLUMN_COMPLETED, finished ? 1 : 0);
-        database.update(TaskOpenHelper.TABLE_TASKS,
-                values,
-                // TODO shouldn't this be .COLUMN_ID????
-                TaskOpenHelper.COLUMN_SERVER_ID + " = " + WHERE_ARGS,
-                new String[]{String.valueOf(task.getLocalId())}
-        );
+        update(task, values);
     }
 
     /**
@@ -175,12 +160,7 @@ public class TaskDataSource {
     public void updateTaskLastUpdated(Task task, Date lastUpdated) {
         ContentValues values = new ContentValues();
         values.put(TaskOpenHelper.COLUMN_UPDATED, lastUpdated.getTime());
-        database.update(TaskOpenHelper.TABLE_TASKS,
-                values,
-                // TODO shouldn't this be .COLUMN_ID????
-                TaskOpenHelper.COLUMN_SERVER_ID + " = " + WHERE_ARGS,
-                new String[]{String.valueOf(task.getLocalId())}
-        );
+        update(task, values);
     }
 
     /**
@@ -198,12 +178,7 @@ public class TaskDataSource {
         values.put(TaskOpenHelper.COLUMN_CREATED, task.getCreated_at().getTime());
         values.put(TaskOpenHelper.COLUMN_UPDATED, task.getUpdated_at().getTime());
 
-        database.update(TaskOpenHelper.TABLE_TASKS,
-                values,
-                // TODO shouldn't this be .COLUMN_ID????
-                TaskOpenHelper.COLUMN_SERVER_ID + " = " + WHERE_ARGS,
-                new String[]{String.valueOf(task.getLocalId())}
-        );
+        update(task, values);
     }
 
     /**
@@ -282,6 +257,20 @@ public class TaskDataSource {
         Date created_at = (created == null) ? null : new Date(Long.valueOf(created));
         Date updated_at = (updated == null) ? null : new Date(Long.valueOf(updated));
         return new Task(localID, serverID, projectID, name, finished, position, created_at, updated_at);
+    }
+
+    /**
+     * Writes a {@code Task} to the database with new values.
+     *
+     * @param task   The {@code Task} to update.
+     * @param values The new values of the {@code Task} that will be written.
+     */
+    public void update(Task task, ContentValues values) {
+        database.update(TaskOpenHelper.TABLE_TASKS,
+                values,
+                TaskOpenHelper.COLUMN_ID + " = " + WHERE_ARGS,
+                new String[]{String.valueOf(task.getLocalId())}
+        );
     }
 
 }

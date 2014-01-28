@@ -98,7 +98,6 @@ public class FeedActivity extends ActionBarActivity {
 
     /** Re-initializes adapter with {@code Project}s in the database. */
     private void syncFeedAdapterWithDatabase() {
-        print("syncing");
         ProjectDataSource projectDataSource = new ProjectDataSource(this);
         projectDataSource.open();
         ArrayList<Project> projects = projectDataSource.getAllProjects();
@@ -155,14 +154,8 @@ public class FeedActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(ACTIVITY_TITLE);
 
-        print("onCreate");
-        syncFeedAdapterWithDatabase();
-
         EnhancedListView listView = (EnhancedListView) findViewById(R.id.lv_projects);
-        listView.setAdapter(adapter);
-
-        // If there are no projects left, show warning
-        refreshNoProjectsWarning();
+        syncFeedAdapterWithDatabase();
 
         listView.setDismissCallback(new EnhancedListView.OnDismissCallback() {
             @Override
