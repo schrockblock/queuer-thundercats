@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.appcompat.R;
+import android.widget.Toast;
 
 import com.thundercats.queuer.models.Task;
 
@@ -49,6 +50,13 @@ public class TaskDataSource {
      */
     public void close() {
         dbHelper.close();
+    }
+
+    /**
+     * Deletes all {@code Task}s in the database.
+     */
+    public void deleteAllTasks() {
+        database.delete(TaskOpenHelper.TABLE_TASKS, "1", null);
     }
 
     /**
@@ -211,14 +219,40 @@ public class TaskDataSource {
     }
 
     /**
-     * Returns a list of all the {@code Task}s in the SQL database.
+     * Returns a list of all {@code Task}s that belong to a certain project.
      *
-     * @return A list of all the {@code Task}s in the SQL database.
+     * @param projectServerID Returns tasks that all share the same project server ID.
+     * @return A list of all {@code Task}s in the SQL database that belong to a certain project.
+     */
+    public ArrayList<Task> getTasks(int projectServerID) {
+        ArrayList<Task> tasks = new ArrayList<Task>();
+        // Cursor over rows whose projectServerIDs match the param
+        Cursor cursor = database.query(TaskOpenHelper.TABLE_TASKS,
+                allColumns,
+                TaskOpenHelper.COLUMN_PROJECT_SERVER_ID + " = " + WHERE_ARGS,
+                new String[]{String.valueOf(projectServerID)},
+                null, null, null);
+        // Add the tasks to the list, scanning row by row
+        if (cursor.moveToFirst()) {
+            tasks.add(cursorToTask(cursor));
+            while (cursor.moveToNext()) {
+                tasks.add(cursorToTask(cursor));
+            }
+        }
+        cursor.close();
+        return tasks;
+    }
+
+    /**
+     * Returns all {@code Task}s in the database.
+     *
+     * @return All {@code Task}s in the database.
      */
     public ArrayList<Task> getAllTasks() {
         ArrayList<Task> tasks = new ArrayList<Task>();
         // A cursor over the entire database
-        Cursor cursor = database.query(TaskOpenHelper.TABLE_TASKS, allColumns, null, null, null, null, null);
+        Cursor cursor = database.query(TaskOpenHelper.TABLE_TASKS,
+                allColumns, null, null, null, null, null);
         // Add the tasks to the list, scanning row by row
         if (cursor.moveToFirst()) {
             tasks.add(cursorToTask(cursor));

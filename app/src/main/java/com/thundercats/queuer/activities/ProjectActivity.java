@@ -140,15 +140,15 @@ public class ProjectActivity extends ActionBarActivity {
     }
 
     /**
-     * Syncs the adapter with the tasks that exist in the database.
+     * Re-initializes the adapter with {@code Task}s in the database.
      */
     private void syncProjectAdapterWithDatabase() {
         TaskDataSource taskDataSource = new TaskDataSource(this);
         taskDataSource.open();
-        ArrayList<Task> tasks = taskDataSource.getAllTasks();
+        ArrayList<Task> tasks = taskDataSource.getTasks(project_id);
         taskDataSource.close();
         adapter = new ProjectAdapter(this, tasks);
-        adapter.notifyDataSetChanged();
+        ((EnhancedListView) findViewById(R.id.lv_tasks)).setAdapter(adapter);
         refreshNoTasksWarning();
     }
 
@@ -210,7 +210,12 @@ public class ProjectActivity extends ActionBarActivity {
                 .setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                clickedTask.setName(taskTitle.getText().toString());
+                                String name = taskTitle.getText().toString();
+                                if (name.isEmpty()) {
+                                    showWarningDialog("Task must have a name.");
+                                    return;
+                                }
+                                clickedTask.setName(name);
                             }
                         })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -244,6 +249,7 @@ public class ProjectActivity extends ActionBarActivity {
                                 Task task = new Task(getApplicationContext(), name, project_id, 0);
                                 adapter.add(task);
                                 syncProjectAdapterWithDatabase();
+                                refreshNoTasksWarning();
                             }
                         })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

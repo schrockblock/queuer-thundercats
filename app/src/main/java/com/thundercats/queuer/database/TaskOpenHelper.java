@@ -10,14 +10,49 @@ import android.util.Log;
  */
 public class TaskOpenHelper extends SQLiteOpenHelper {
 
+    /**
+     * The name of the table.
+     */
     public static final String TABLE_TASKS = "tasks";
+
+    /**
+     * The column name for {@code Task}s' local IDs.
+     */
     public static final String COLUMN_ID = "_id";
+
+    /**
+     * The column name for {@code Task}s' server IDs.
+     */
     public static final String COLUMN_SERVER_ID = "id";
+
+    /**
+     * The column name for the server IDs of the {@code Projects} to which {@code Task}s belong.
+     */
     public static final String COLUMN_PROJECT_SERVER_ID = "project_id";
+
+    /**
+     * The column name for {@code Task}s' titles.
+     */
     public static final String COLUMN_TEXT = "text";
+
+    /**
+     * The column name for whether or not {@code Task}s are finished.
+     */
     public static final String COLUMN_COMPLETED = "completed";
+
+    /**
+     * The column name for {@code Task}s' positions.
+     */
     public static final String COLUMN_POSITION = "position";
+
+    /**
+     * The column name for {@code Task}s' creation dates.
+     */
     public static final String COLUMN_CREATED = "created_at";
+
+    /**
+     * The column name for {@code Task}s' last-updated dates.
+     */
     public static final String COLUMN_UPDATED = "updated_at";
 
     private static final String DATABASE_NAME = "tasks.db";
@@ -25,8 +60,8 @@ public class TaskOpenHelper extends SQLiteOpenHelper {
 
     // Database creation sql statement
     private static final String DATABASE_CREATE = "create table "
-            + TABLE_TASKS + "(" + COLUMN_ID
-            + " integer primary key autoincrement, "
+            + TABLE_TASKS + "("
+            + COLUMN_ID + " integer primary key autoincrement, "
             + COLUMN_SERVER_ID + " integer, "
             + COLUMN_PROJECT_SERVER_ID + " integer, "
             + COLUMN_TEXT + " text not null, "

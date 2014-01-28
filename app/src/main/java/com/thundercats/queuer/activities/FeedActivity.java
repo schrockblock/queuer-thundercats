@@ -15,7 +15,9 @@ import android.widget.Toast;
 import com.thundercats.queuer.R;
 import com.thundercats.queuer.adapters.FeedAdapter;
 import com.thundercats.queuer.database.ProjectDataSource;
+import com.thundercats.queuer.database.TaskDataSource;
 import com.thundercats.queuer.models.Project;
+import com.thundercats.queuer.models.Task;
 import com.thundercats.queuer.views.EnhancedListView;
 
 import java.util.ArrayList;
@@ -44,10 +46,9 @@ public class FeedActivity extends ActionBarActivity {
             if (resultCode == RESULT_OK) {
                 Bundle data = intentResult.getExtras();
                 Project project = data.getParcelable(Project.INTENT_KEY);
-                if (project == null)
-                    Toast.makeText(this, "NULL PROJECT PASSED BACK!", Toast.LENGTH_SHORT).show();
-                adapter.add(project);
-                refreshNoProjectsWarning();
+                //don't need following since project already written to DB in CreateProjectActivity
+                //adapter.add(project);
+                syncFeedAdapterWithDatabase();
             }
         }
     }
@@ -70,32 +71,41 @@ public class FeedActivity extends ActionBarActivity {
                 return true;
             case R.id.action_wipe_database:
                 deleteAllProjects();
+                deleteAllTasks();
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    /** Deletes all tasks. */
+    private void deleteAllTasks() {
+        TaskDataSource dataSource = new TaskDataSource(this);
+        dataSource.open();
+        dataSource.deleteAllTasks();
+        dataSource.close();
+    }
+
     /** Deletes all projects, resets the adapter, and refreshes screen. */
     private void deleteAllProjects() {
-        ProjectDataSource projectDataSource = new ProjectDataSource(this);
-        projectDataSource.open();
-        ArrayList<Project> projects = projectDataSource.getAllProjects();
-        for (Project p : projects) {
-            projectDataSource.deleteProject(p);
-        }
-        projectDataSource.close();
+        ProjectDataSource dataSource = new ProjectDataSource(this);
+        dataSource.open();
+        dataSource.deleteAllProjects();
+        dataSource.close();
 
         adapter = new FeedAdapter(this, new ArrayList<Project>());
         refreshNoProjectsWarning();
     }
 
-    /** Re-initializes adapter w/ projects in database. */
+    /** Re-initializes adapter with {@code Project}s in the database. */
     private void syncFeedAdapterWithDatabase() {
+        print("syncing");
         ProjectDataSource projectDataSource = new ProjectDataSource(this);
         projectDataSource.open();
         ArrayList<Project> projects = projectDataSource.getAllProjects();
         projectDataSource.close();
         adapter = new FeedAdapter(this, projects);
+        ((EnhancedListView) findViewById(R.id.lv_projects)).setAdapter(adapter);
+        refreshNoProjectsWarning();
     }
 
     /**
@@ -145,6 +155,7 @@ public class FeedActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(ACTIVITY_TITLE);
 
+        print("onCreate");
         syncFeedAdapterWithDatabase();
 
         EnhancedListView listView = (EnhancedListView) findViewById(R.id.lv_projects);
@@ -170,10 +181,7 @@ public class FeedActivity extends ActionBarActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(FeedActivity.this, ProjectActivity.class);
-                // The Project that was clicked is passed via Intent...
-                intent.putExtra(Project.INTENT_KEY, adapter.getItem(position));
-                startActivity(intent);
+                projectClicked(adapter.getItem(position));
             }
         });
 
@@ -181,11 +189,29 @@ public class FeedActivity extends ActionBarActivity {
         listView.enableRearranging();
     }
 
+    /** Calls new activity. Passes project via Intent. */
+    private void projectClicked(Project project) {
+        Intent intent = new Intent(FeedActivity.this, ProjectActivity.class);
+        intent.putExtra(Project.INTENT_KEY, project);
+        printDiagnostics(project);
+        startActivity(intent);
+    }
+
+    /** Prints a {@code Project}'s fields for diagnosis. */
+    private void printDiagnostics(Project project) {
+        String d = "Title: " + project.getTitle() + "\n"
+                + "LocalID: " + project.getLocalId() + "\n"
+                + "ServerID: " + project.getId() + "\n"
+                + "Color: " + project.getColor() + "\n"
+                + "Created: " + project.getCreated_at() + "\n"
+                + "Updated: " + project.getUpdated_at();
+        print(d);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         adapter.notifyDataSetChanged();
-        print("onResume");
     }
 
     private void print(String s) {

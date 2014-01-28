@@ -72,7 +72,7 @@ public class ProjectAdapter extends BaseAdapter implements RearrangementListener
      * @param position The index where the {@code Task} will be inserted.
      */
     public void insert(Task task, int position) {
-        tasks.add(position, task);
+        if (!tasks.contains(task)) tasks.add(position, task);
         notifyDataSetChanged();
     }
 

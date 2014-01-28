@@ -51,6 +51,13 @@ public class ProjectDataSource {
     }
 
     /**
+     * Deletes all {@code Project}s in the database.
+     */
+    public void deleteAllProjects() {
+        database.delete(ProjectOpenHelper.TABLE_PROJECTS, "1", null);
+    }
+
+    /**
      * Returns a row of cells that defines a particular {@code Project}.
      *
      * @param title    The title of the {@code Project}.
