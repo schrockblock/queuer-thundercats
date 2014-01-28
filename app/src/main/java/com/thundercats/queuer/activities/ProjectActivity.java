@@ -215,7 +215,7 @@ public class ProjectActivity extends ActionBarActivity {
                                     showWarningDialog("Task must have a name.");
                                     return;
                                 }
-                                clickedTask.setName(name);
+                                clickedTask.setName(name, getApplicationContext());
                             }
                         })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

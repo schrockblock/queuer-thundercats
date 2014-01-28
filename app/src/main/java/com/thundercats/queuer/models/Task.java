@@ -11,9 +11,6 @@ import java.util.Date;
  */
 public class Task {
 
-    /** The context under which this {@code Task} was created. */
-    private Context context;
-
     /**
      * The server ID of the {@code Project} to which this {@code Task} belongs.
      */
@@ -87,7 +84,6 @@ public class Task {
      * @param position   The position where this {@code Task} will be inserted.
      */
     public Task(Context context, String name, int project_id, int position) {
-        this.context = context;
         this.name = name;
         this.project_id = project_id;
         this.position = position;
@@ -134,9 +130,10 @@ public class Task {
     /**
      * Sets this {@code Task}'s name.
      *
-     * @param name The new name of this {@code Task}.
+     * @param name    The new name of this {@code Task}.
+     * @param context Used to open up the database.
      */
-    public void setName(String name) {
+    public void setName(String name, Context context) {
         this.name = name;
         TaskDataSource dataSource = new TaskDataSource(context);
         dataSource.open();
@@ -176,8 +173,9 @@ public class Task {
      * Sets the position of this {@code Task}.
      *
      * @param position The new position of this {@code Task}.
+     * @param context  Used to open up the database.
      */
-    public void setPosition(int position) {
+    public void setPosition(int position, Context context) {
         this.position = position;
         TaskDataSource dataSource = new TaskDataSource(context);
         dataSource.open();
@@ -198,8 +196,9 @@ public class Task {
      * Sets whether or not this {@code Task} is finished.
      *
      * @param finished Whether or not this {@code Task} is finished.
+     * @param context  Used to open up the database.
      */
-    public void setFinished(boolean finished) {
+    public void setFinished(boolean finished, Context context) {
         this.finished = finished;
         TaskDataSource dataSource = new TaskDataSource(context);
         dataSource.open();
@@ -238,8 +237,9 @@ public class Task {
      * Sets when this {@code Task} was last updated.
      *
      * @param updated_at When this {@code Task} was last updated.
+     * @param context    Used to open up the database.
      */
-    public void setUpdated_at(Date updated_at) {
+    public void setUpdated_at(Date updated_at, Context context) {
         this.updated_at = updated_at;
         TaskDataSource dataSource = new TaskDataSource(context);
         dataSource.open();
