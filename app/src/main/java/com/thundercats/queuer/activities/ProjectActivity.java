@@ -3,6 +3,7 @@ package com.thundercats.queuer.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -66,7 +67,11 @@ public class ProjectActivity extends ActionBarActivity {
                 return true;
             case R.id.action_hide_project:
                 project.setHidden(true);
-                // TODO return to parent Intent and call FeedAdapter#notifyDataSetChanged
+                NavUtils.navigateUpFromSameTask(this);
+                // TODO call FeedAdapter#notifyDataSetChanged in FeedActivity's onResume
+                return true;
+            case R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
                 return true;
             default:
                 return true;
@@ -85,6 +90,8 @@ public class ProjectActivity extends ActionBarActivity {
         // Set the action bar to display the project number.
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(project.getTitle());
+        // allows for up navigation to return to parent activity
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         TaskDataSource taskDataSource = new TaskDataSource(this);
         taskDataSource.open();
