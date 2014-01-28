@@ -17,5 +17,11 @@
                 android:orderInCategory="101"
                 android:showAsAction="ifRoom"
             />
+            <item
+                android:id="@+id/action_hide_project"
+                android:title="@string/hide_project"
+                android:orderInCategory="102"
+                android:showAsAction="ifRoom"
+            />
 
 </menu>

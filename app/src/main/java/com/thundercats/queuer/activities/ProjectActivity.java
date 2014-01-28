@@ -64,6 +64,10 @@ public class ProjectActivity extends ActionBarActivity {
             case R.id.action_change_color:
                 showChangeColorDialog();
                 return true;
+            case R.id.action_hide_project:
+                project.setHidden(true);
+                // TODO return to parent Intent and call FeedAdapter#notifyDataSetChanged
+                return true;
             default:
                 return true;
         }
