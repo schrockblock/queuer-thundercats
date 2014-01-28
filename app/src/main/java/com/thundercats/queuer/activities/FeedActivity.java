@@ -182,5 +182,14 @@ public class FeedActivity extends ActionBarActivity {
         listView.enableRearranging();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
+        print("onResume");
+    }
 
+    private void print(String s) {
+        Toast.makeText(this, s, Toast.LENGTH_LONG).show();
+    }
 }

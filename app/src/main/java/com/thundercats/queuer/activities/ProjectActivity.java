@@ -68,7 +68,6 @@ public class ProjectActivity extends ActionBarActivity {
             case R.id.action_hide_project:
                 project.setHidden(true);
                 NavUtils.navigateUpFromSameTask(this);
-                // TODO call FeedAdapter#notifyDataSetChanged in FeedActivity's onResume
                 return true;
             case R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
