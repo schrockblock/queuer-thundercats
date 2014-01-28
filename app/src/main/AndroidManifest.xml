@@ -23,7 +23,12 @@
 
         <activity
             android:name=".activities.ProjectActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:parentActivityName=".activities.FeedActivity"
+            >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.FeedActivity"/>
         </activity>
 
         <activity

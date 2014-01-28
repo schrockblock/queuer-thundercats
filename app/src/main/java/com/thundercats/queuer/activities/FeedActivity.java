@@ -156,7 +156,6 @@ public class FeedActivity extends ActionBarActivity {
         listView.setDismissCallback(new EnhancedListView.OnDismissCallback() {
             @Override
             public EnhancedListView.Undoable onDismiss(EnhancedListView listView, final int position) {
-                Toast.makeText(FeedActivity.this, "Clicked on item " + adapter.getItem(position), Toast.LENGTH_SHORT).show();
                 final Project project = adapter.getItem(position);
                 adapter.remove(position);
                 return new EnhancedListView.Undoable() {
