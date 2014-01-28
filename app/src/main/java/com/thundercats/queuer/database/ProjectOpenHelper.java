@@ -10,8 +10,9 @@ import android.util.Log;
  */
 public class ProjectOpenHelper extends SQLiteOpenHelper {
 
+    // PROJECT FIELDS
     public static final String TABLE_PROJECTS = "projects";
-    public static final String COLUMN_ID = "_id";
+    public static final String COLUMN_LOCAL_ID = "_id";
     public static final String COLUMN_SERVER_ID = "id";
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_COLOR = "color";
@@ -24,7 +25,7 @@ public class ProjectOpenHelper extends SQLiteOpenHelper {
 
     // Database creation sql statement
     private static final String DATABASE_CREATE = "create table "
-            + TABLE_PROJECTS + "(" + COLUMN_ID
+            + TABLE_PROJECTS + "(" + COLUMN_LOCAL_ID
             + " integer primary key autoincrement, "
             + COLUMN_SERVER_ID + " integer, "
             + COLUMN_TITLE + " text not null, "

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">QueuerDemo</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_add_task">Add Task</string>
+    <string name="login_button">Login</string>
+    <string name="undo">Undo</string>
+    <string name="undo_all">Undo All</string>
+    <string name="item_deleted">Item deleted</string>
+    <string name="n_items_deleted">%1$s items deleted</string>
+    <string name="remember_me">Remember me</string>
+
+</resources>

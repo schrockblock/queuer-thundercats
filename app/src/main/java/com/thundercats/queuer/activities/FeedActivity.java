@@ -66,13 +66,36 @@ public class FeedActivity extends ActionBarActivity {
             case R.id.action_create_project:
                 // The Intent for going to the "Create New Project" screen
                 Intent intent = new Intent(FeedActivity.this, CreateProjectActivity.class);
-                // FeedAdapter must be passed since it's used for getNextID();
-                intent.putExtra(FeedAdapter.INTENT_KEY, adapter);
                 startActivityForResult(intent, CREATE_PROJECT_REQUEST);
                 return true;
+            case R.id.action_wipe_database:
+                deleteAllProjects();
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /** Deletes all projects, resets the adapter, and refreshes screen. */
+    private void deleteAllProjects() {
+        ProjectDataSource projectDataSource = new ProjectDataSource(this);
+        projectDataSource.open();
+        ArrayList<Project> projects = projectDataSource.getAllProjects();
+        for (Project p : projects) {
+            projectDataSource.deleteProject(p);
+        }
+        projectDataSource.close();
+
+        adapter = new FeedAdapter(this, new ArrayList<Project>());
+        refreshNoProjectsWarning();
+    }
+
+    /** Re-initializes adapter w/ projects in database. */
+    private void syncFeedAdapterWithDatabase() {
+        ProjectDataSource projectDataSource = new ProjectDataSource(this);
+        projectDataSource.open();
+        ArrayList<Project> projects = projectDataSource.getAllProjects();
+        projectDataSource.close();
+        adapter = new FeedAdapter(this, projects);
     }
 
     /**
@@ -122,13 +145,9 @@ public class FeedActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(ACTIVITY_TITLE);
 
-        ProjectDataSource projectDataSource = new ProjectDataSource(this);
-        projectDataSource.open();
-        ArrayList<Project> projects = projectDataSource.getAllProjects();
-        projectDataSource.close();
+        syncFeedAdapterWithDatabase();
 
         EnhancedListView listView = (EnhancedListView) findViewById(R.id.lv_projects);
-        adapter = new FeedAdapter(this, projects);
         listView.setAdapter(adapter);
 
         // If there are no projects left, show warning
@@ -153,9 +172,7 @@ public class FeedActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(FeedActivity.this, ProjectActivity.class);
-                // The ProjectActivity needs the project ID of the clicked Project
-                intent.putExtra(Project.PROJECT_ID_INTENT_KEY, adapter.getItemId(position));
-                // and also the Project that was clicked...
+                // The Project that was clicked is passed via Intent...
                 intent.putExtra(Project.INTENT_KEY, adapter.getItem(position));
                 startActivity(intent);
             }

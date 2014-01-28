@@ -11,16 +11,18 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.thundercats.queuer.R;
 import com.thundercats.queuer.adapters.ProjectAdapter;
+import com.thundercats.queuer.database.TaskDataSource;
 import com.thundercats.queuer.models.Project;
 import com.thundercats.queuer.models.Task;
 import com.thundercats.queuer.views.EnhancedListView;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * The screen that displays all of the user's {@link com.thundercats.queuer.models.Task}s
@@ -32,27 +34,73 @@ public class ProjectActivity extends ActionBarActivity {
     private final String CHANGE_COLOR_DIALOG_TITLE = "Change Project Color";
     private final String ADD_TASK_DIALOG_TITLE = "New Task";
     private final String EDIT_TASK_DIALOG_TITLE = "Edit Task";
+    private final String WARN_DIALOG_TITLE = "Warning";
 
+    /** The {@code Project} that dictates this Activity. */
     private Project project;
+
+    /** The server ID of the {@code Project} that dictates this Activity. */
     private int project_id;
-    private ArrayList<Task> tasks = new ArrayList<Task>();
+
+    /** The adapter that controls the list of {@code Task}s under the {@code Project}. */
     private ProjectAdapter adapter;
 
-    /**
-     * @param savedInstanceState
-     */
+    // provides list of items for ActionBar drop-down
+    private SpinnerAdapter mSpinnerAdapter;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.project, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add_task:
+                showAddTaskDialog();
+                return true;
+            case R.id.action_change_color:
+                showChangeColorDialog();
+                return true;
+            default:
+                return true;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project);
 
+        // Get project from Intent
         project = getIntent().getParcelableExtra(Project.INTENT_KEY);
         project_id = project.getId();
 
         // Set the action bar to display the project number.
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(project.getTitle());
+
+        TaskDataSource taskDataSource = new TaskDataSource(this);
+        taskDataSource.open();
+        ArrayList<Task> tasks = taskDataSource.getAllTasks();
+        taskDataSource.close();
+
+        /*
+        // TODO attempting to create ActionBar drop-down
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        mSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.action_list, R.layout.simple_spinner_dropdown_item);
+        actionBar.setListNavigationCallbacks(mSpinnerAdapter, new ActionBar.OnNavigationListener() {
+            @Override
+            public boolean onNavigationItemSelected(int i, long l) {
+                String s = (String) mSpinnerAdapter.getItem(i);
+                Toast.makeText(ProjectActivity.this, s, Toast.LENGTH_LONG).show();
+                return true;
+            }
+        });
         Toast.makeText(this, "Project " + project_id + ": " + project.getTitle(), Toast.LENGTH_LONG).show();
+        */
 
         EnhancedListView listView = (EnhancedListView) findViewById(R.id.lv_tasks);
         adapter = new ProjectAdapter(this, tasks);
@@ -76,8 +124,8 @@ public class ProjectActivity extends ActionBarActivity {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                showEditTaskDialog();
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                showEditTaskDialog(adapter.getItem(position));
             }
         });
 
@@ -98,34 +146,6 @@ public class ProjectActivity extends ActionBarActivity {
         } else {
             warning.setVisibility(View.GONE);
             listView.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.project, menu);
-        return true;
-    }
-
-    /**
-     * Handles action bar item clicks.
-     *
-     * @param item The item selected.
-     * @return True, since an item was selected.
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.action_add_task:
-                showAddTaskDialog();
-                return true;
-            case R.id.action_change_color:
-                showChangeColorDialog();
-                return true;
-            default:
-                return true;
         }
     }
 
@@ -164,31 +184,26 @@ public class ProjectActivity extends ActionBarActivity {
     /**
      * Pops up the dialog for user to edit a task.
      * Called when user clicks on a task.
+     * @param clickedTask The task that was clicked.
      */
-    private void showEditTaskDialog() {
+    private void showEditTaskDialog(final Task clickedTask) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(EDIT_TASK_DIALOG_TITLE);
 
         View layout = getLayoutInflater().inflate(R.layout.dialog_edit_task, null);
+        final EditText taskTitle = (EditText) layout.findViewById(R.id.task_name);
 
-        final EditText taskTitle = (EditText) layout.findViewById(R.id.task);
-
-        // set dialog message
         alertDialogBuilder
-                //.setMessage(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)))
                 .setCancelable(true)
                 .setView(layout)
                 .setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Task task = new Task();
-                                task.setName(taskTitle.getText().toString());
-                                //adapter.notifyDataSetChanged();
-                                //refreshNoTasksWarning();
+                            public void onClick(DialogInterface dialog, int which) {
+                                clickedTask.setName(taskTitle.getText().toString());
                             }
                         })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+                    public void onClick(DialogInterface dialog, int which) {
                     }
                 });
         AlertDialog alertDialog = alertDialogBuilder.create();
@@ -204,9 +219,9 @@ public class ProjectActivity extends ActionBarActivity {
         // set title
         alertDialogBuilder.setTitle(ADD_TASK_DIALOG_TITLE);
 
-        View layout = getLayoutInflater().inflate(R.layout.dialog_new_task, null);
+        final View layout = getLayoutInflater().inflate(R.layout.dialog_new_task, null);
 
-        final EditText taskTitle = (EditText) layout.findViewById(R.id.task);
+        final EditText taskTitle = (EditText) layout.findViewById(R.id.task_name);
 
         // set dialog message
         alertDialogBuilder
@@ -215,12 +230,14 @@ public class ProjectActivity extends ActionBarActivity {
                 .setView(layout)
                 .setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Task task = new Task();
-                                task.setName(taskTitle.getText().toString());
-                                task.setProject_id(project_id);
-                                tasks.add(0, task);
-                                adapter.notifyDataSetChanged();
+                            public void onClick(DialogInterface dialog, int which) {
+                                String name = taskTitle.getText().toString();
+                                if (name.isEmpty()) {
+                                    showWarningDialog("Task must have a name.");
+                                    return;
+                                }
+                                Task task = new Task(ProjectActivity.this, name, project_id, 0);
+                                adapter.add(task);
                                 refreshNoTasksWarning();
                             }
                         })
@@ -231,5 +248,31 @@ public class ProjectActivity extends ActionBarActivity {
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
+
+    /**
+     * Shows user a dialog, reminding them to fill out all fields with appropriate values.
+     */
+    private void showWarningDialog(String warning) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(WARN_DIALOG_TITLE);
+        View layout = getLayoutInflater().inflate(R.layout.dialog_blank, null);
+
+        alertDialogBuilder
+                .setMessage(warning)
+                        //.setCancelable(true)
+                .setView(layout)
+                .setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {}
+                        });
+                /*
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {}
+                });
+                */
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
 
 }

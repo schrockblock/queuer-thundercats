@@ -3,7 +3,7 @@
 
     <string name="app_name">QueuerThundercats</string>
 
-    <string name="action_add_task">Add Task</string>
+    <string name="add_task">Add Task</string>
     <string name="action_add_project">Add Project</string>
 
     <string name="hint_project_name">project name (e.g., MyProject)</string>

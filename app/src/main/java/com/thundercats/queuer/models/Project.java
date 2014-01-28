@@ -1,13 +1,11 @@
 package com.thundercats.queuer.models;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.thundercats.queuer.database.ProjectDataSource;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -30,19 +28,21 @@ public class Project implements Parcelable {
                 }
             };
 
-    /** The key for storing {@code Project} IDs as {@code Intent} extras. */
-    public static final String PROJECT_ID_INTENT_KEY = "project_id";
-
     /** The key for storing {@code Project}s as {@code Intent} extras. */
     public static final String INTENT_KEY = "project";
+
+
+    //////////////////////
+    /// PROJECT FIELDS ///
+    //////////////////////
 
     /** Whether this project is hidden. */
     private boolean isHidden;
 
-    /** This project's unique ID. Useful since users can move projects around. */
+    /** This project's unique server ID. */
     private int id;
 
-    /** */
+    /** This project's unique local ID. */
     private int localId;
 
     /** This project's title. */
@@ -51,17 +51,22 @@ public class Project implements Parcelable {
     /** This project's color. */
     private int color;
 
+    /** When the project was created. */
+    private Date created_at;
+
+    /** When the project was last updated. */
+    private Date updated_at;
+
+    /** Constructor for setting project fields. */
     public Project() {}
 
     /**
      * Constructs a new Project.
      *
-     * @param id    This project's ID.
      * @param title This project's title.
      * @param color This project's color.
      */
-    public Project(Context context, int id, String title, int color) {
-        this.id = id;
+    public Project(Context context, String title, int color) {
         this.title = title;
         this.color = color;
 
@@ -71,27 +76,67 @@ public class Project implements Parcelable {
         projectDataSource.close();
     }
 
+    /**
+     * Returns the {@code Date} when this {@code Project} was created.
+     * @return The {@code Date} when this {@code Project} was created.
+     */
+    public Date getCreated_at() {
+        return created_at;
+    }
+
+    /**
+     * Sets the {@code Date} when this {@code Project} was created.
+     * @param created_at The {@code Date} when this {@code Project} was created.
+     */
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
+    }
+
+    /**
+     * Returns the {@code Date} when this {@code Project} was last updated.
+     * @return The {@code Date} when this {@code Project} was last updated.
+     */
+    public Date getUpdated_at() {
+        return updated_at;
+    }
+
+    /**
+     * Sets the {@code Date} when this {@code Project} was last updated.
+     * @param updated_at The {@code Date} when this {@code Project} was last updated.
+     */
+    public void setUpdated_at(Date updated_at) {
+        this.updated_at = updated_at;
+    }
+
+    /**
+     * Returns this {@code Project}'s local ID.
+     * @return This {@code Project}'s local ID.
+     */
     public int getLocalId() {
         return localId;
     }
 
+    /**
+     * Sets this {@code Project}'s local ID.
+     * @param localId This {@code Project}'s local ID.
+     */
     public void setLocalId(int localId) {
         this.localId = localId;
     }
 
     /**
-     * Returns this project's ID.
+     * Returns this project's server ID.
      *
-     * @return This project's ID.
+     * @return This project's server ID.
      */
     public int getId() {
         return id;
     }
 
     /**
-     * Sets this project's ID.
+     * Sets this project's server ID.
      *
-     * @param id The new ID.
+     * @param id The new server ID.
      */
     public void setId(int id) {
         this.id = id;
@@ -133,10 +178,18 @@ public class Project implements Parcelable {
         this.color = color;
     }
 
+    /**
+     * Returns whether or not this {@code Project} is hidden.
+     * @return Whether or not this {@code Project} is hidden.
+     */
     public boolean isHidden() {
         return isHidden;
     }
 
+    /**
+     * Sets whether or not this {@code Project} is hidden.
+     * @param isHidden Whether or not this {@code Project} is hidden.
+     */
     public void setHidden(boolean isHidden) {
         this.isHidden = isHidden;
     }

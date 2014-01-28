@@ -5,10 +5,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.thundercats.queuer.activities.LoginActivity" >
 
-    <item android:id="@+id/action_create_project"
+    <item
+        android:id="@+id/action_create_project"
         android:title="@string/action_add_project"
         android:orderInCategory="100"
         app:showAsAction="ifRoom"
-        />
+    />
+
+    <item
+        android:id="@+id/action_wipe_database"
+        android:title="Wipe Database"
+        android:orderInCategory="101"
+        android:showAsAction="ifRoom"
+    />
 
 </menu>
