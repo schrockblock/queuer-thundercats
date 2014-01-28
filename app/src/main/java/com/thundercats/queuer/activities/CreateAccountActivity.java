@@ -28,7 +28,7 @@ public class CreateAccountActivity extends ActionBarActivity {
     }
 
     void updateButtonState() {
-        if(checkEditText(user) && checkEditText(pass)) createAccount.setEnabled(false);
+        if(checkEditText(user) || checkEditText(pass)) createAccount.setEnabled(false);
         else createAccount.setEnabled(true);
     }
 

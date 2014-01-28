@@ -57,7 +57,7 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
     }
 
     void updateButtonState() {
-        if(checkEditText(user) && checkEditText(pass)) login.setEnabled(false);
+        if(checkEditText(user) || checkEditText(pass)) login.setEnabled(false);
         else login.setEnabled(true);
     }
 
