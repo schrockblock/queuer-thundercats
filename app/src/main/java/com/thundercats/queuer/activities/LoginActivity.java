@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +29,10 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
     private final String LOGIN_PREFS_USERNAME_KEY = "username";
     private final String LOGIN_PREFS_PASSWORD_KEY = "password";
     private final String LOGIN_PREFS_REMEMBER_KEY = "remember";
+    EditText user;
+    EditText pass;
+    Button login;
+
 
     /**
      * Shows/hides the progress bar.
@@ -44,6 +50,29 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
     public void startedRequest() {
         showProgressBar(true);
     }
+
+    private boolean checkEditText(EditText edit) {
+        return edit.getText().length() == 0;
+    }
+
+    void updateButtonState() {
+        if(checkEditText(user) && checkEditText(pass)) login.setEnabled(false);
+        else login.setEnabled(true);
+    }
+
+
+    private class LocalTextWatcher implements TextWatcher {
+        public void afterTextChanged(Editable s) {
+            updateButtonState();
+        }
+
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+    }
+
 
     /**
      * Indicate to the user that the login operation has terminated.
@@ -69,11 +98,20 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(ACTIVITY_TITLE);
 
-        final EditText user = (EditText) findViewById(R.id.et_username);
-        final EditText pass = (EditText) findViewById(R.id.et_password);
+        user = (EditText) findViewById(R.id.et_username);
+        pass = (EditText) findViewById(R.id.et_password);
         final CheckBox remember = (CheckBox) findViewById(R.id.cb_remember);
 
-        Button login = (Button) findViewById(R.id.btn_login);
+        login = (Button) findViewById(R.id.btn_login);
+
+        //monitor EditText fields for entered text
+        TextWatcher watcher = new LocalTextWatcher();
+        user.addTextChangedListener(watcher);
+        pass.addTextChangedListener(watcher);
+
+        //updates button based on input from TextWatcher
+        updateButtonState();
+
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
