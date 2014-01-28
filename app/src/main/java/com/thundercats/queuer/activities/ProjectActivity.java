@@ -3,6 +3,7 @@ package com.thundercats.queuer.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -13,9 +14,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.thundercats.queuer.R;
+import com.thundercats.queuer.adapters.FeedAdapter;
 import com.thundercats.queuer.adapters.ProjectAdapter;
+import com.thundercats.queuer.database.ProjectDataSource;
 import com.thundercats.queuer.database.TaskDataSource;
 import com.thundercats.queuer.models.Project;
 import com.thundercats.queuer.models.Task;
@@ -66,7 +70,10 @@ public class ProjectActivity extends ActionBarActivity {
                 return true;
             case R.id.action_hide_project:
                 project.setHidden(true);
-                // TODO return to parent Intent and call FeedAdapter#notifyDataSetChanged
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
                 return true;
             default:
                 return true;
@@ -82,14 +89,12 @@ public class ProjectActivity extends ActionBarActivity {
         project = getIntent().getParcelableExtra(Project.INTENT_KEY);
         project_id = project.getId();
 
-        // Set the action bar to display the project number.
+        // action bar. displays project number. up navigation enabled.
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(project.getTitle());
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
-        TaskDataSource taskDataSource = new TaskDataSource(this);
-        taskDataSource.open();
-        ArrayList<Task> tasks = taskDataSource.getAllTasks();
-        taskDataSource.close();
+        syncProjectAdapterWithDatabase();
 
         /*
         // TODO attempting to create ActionBar drop-down
@@ -107,10 +112,7 @@ public class ProjectActivity extends ActionBarActivity {
         */
 
         EnhancedListView listView = (EnhancedListView) findViewById(R.id.lv_tasks);
-        adapter = new ProjectAdapter(this, tasks);
         listView.setAdapter(adapter);
-
-        refreshNoTasksWarning();
 
         listView.setDismissCallback(new EnhancedListView.OnDismissCallback() {
             @Override
@@ -138,10 +140,23 @@ public class ProjectActivity extends ActionBarActivity {
     }
 
     /**
+     * Re-initializes the adapter with {@code Task}s in the database.
+     */
+    private void syncProjectAdapterWithDatabase() {
+        TaskDataSource taskDataSource = new TaskDataSource(this);
+        taskDataSource.open();
+        ArrayList<Task> tasks = taskDataSource.getTasks(project_id);
+        taskDataSource.close();
+        adapter = new ProjectAdapter(this, tasks);
+        ((EnhancedListView) findViewById(R.id.lv_tasks)).setAdapter(adapter);
+        refreshNoTasksWarning();
+    }
+
+    /**
      * Shows/hides the warning depending on whether there are visible projects.
+     * Either show the TextView or the ListView, but not both.
      */
     private void refreshNoTasksWarning() {
-        // We either show the TextView or the ListView, but not both
         TextView warning = (TextView) findViewById(R.id.tv_warning_no_projects);
         EnhancedListView listView = (EnhancedListView) findViewById(R.id.lv_tasks);
         if (adapter.isEmpty()) {
@@ -159,16 +174,10 @@ public class ProjectActivity extends ActionBarActivity {
      */
     private void showChangeColorDialog() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        // set title
         alertDialogBuilder.setTitle(CHANGE_COLOR_DIALOG_TITLE);
-
         View layout = getLayoutInflater().inflate(R.layout.dialog_change_colors, null);
-
         final Spinner spinner = (Spinner) layout.findViewById(R.id.spinner_change_color);
-
-        // set dialog message
         alertDialogBuilder
-                //.setMessage(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)))
                 .setCancelable(true)
                 .setView(layout)
                 .setPositiveButton("Ok",
@@ -193,17 +202,20 @@ public class ProjectActivity extends ActionBarActivity {
     private void showEditTaskDialog(final Task clickedTask) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(EDIT_TASK_DIALOG_TITLE);
-
         View layout = getLayoutInflater().inflate(R.layout.dialog_edit_task, null);
         final EditText taskTitle = (EditText) layout.findViewById(R.id.task_name);
-
         alertDialogBuilder
                 .setCancelable(true)
                 .setView(layout)
                 .setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                clickedTask.setName(taskTitle.getText().toString());
+                                String name = taskTitle.getText().toString();
+                                if (name.isEmpty()) {
+                                    showWarningDialog("Task must have a name.");
+                                    return;
+                                }
+                                clickedTask.setName(name);
                             }
                         })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -220,16 +232,10 @@ public class ProjectActivity extends ActionBarActivity {
      */
     private void showAddTaskDialog() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        // set title
         alertDialogBuilder.setTitle(ADD_TASK_DIALOG_TITLE);
-
         final View layout = getLayoutInflater().inflate(R.layout.dialog_new_task, null);
-
         final EditText taskTitle = (EditText) layout.findViewById(R.id.task_name);
-
-        // set dialog message
         alertDialogBuilder
-                //.setMessage(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)))
                 .setCancelable(true)
                 .setView(layout)
                 .setPositiveButton("Ok",
@@ -240,8 +246,9 @@ public class ProjectActivity extends ActionBarActivity {
                                     showWarningDialog("Task must have a name.");
                                     return;
                                 }
-                                Task task = new Task(ProjectActivity.this, name, project_id, 0);
+                                Task task = new Task(getApplicationContext(), name, project_id, 0);
                                 adapter.add(task);
+                                syncProjectAdapterWithDatabase();
                                 refreshNoTasksWarning();
                             }
                         })
@@ -260,20 +267,13 @@ public class ProjectActivity extends ActionBarActivity {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(WARN_DIALOG_TITLE);
         View layout = getLayoutInflater().inflate(R.layout.dialog_blank, null);
-
         alertDialogBuilder
                 .setMessage(warning)
-                        //.setCancelable(true)
                 .setView(layout)
                 .setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {}
                         });
-                /*
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int id) {}
-                });
-                */
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
