@@ -1,5 +1,6 @@
 package com.thundercats.queuer.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -90,6 +91,12 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
         }
     }
 
+    public void buttonClicked(View v){
+
+        Intent newIntent = new Intent(this, CreateAccountActivity.class);
+        startActivity(newIntent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +111,8 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
 
         login = (Button) findViewById(R.id.btn_login);
 
+        final Button createAccount = (Button) findViewById(R.id.btn_create_account);
+
         //monitor EditText fields for entered text
         TextWatcher watcher = new LocalTextWatcher();
         user.addTextChangedListener(watcher);
@@ -111,6 +120,7 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
 
         //updates button based on input from TextWatcher
         updateButtonState();
+
 
 
         login.setOnClickListener(new View.OnClickListener() {
