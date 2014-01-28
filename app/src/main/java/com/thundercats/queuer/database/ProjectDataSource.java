@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Created by eschrock on 1/21/14.
+ * The class responsible for saving {@link com.thundercats.queuer.models.Project}s locally.
+ *
+ * @author Kevin Chen
  */
 public class ProjectDataSource {
     // Database fields
@@ -26,8 +28,6 @@ public class ProjectDataSource {
             ProjectOpenHelper.COLUMN_UPDATED,
             ProjectOpenHelper.COLUMN_HIDDEN,
             ProjectOpenHelper.COLUMN_TITLE};
-    // the symbol for whereArgs
-    private final String WHERE_ARGS = "?";
 
     /**
      * Initializes the {@link com.thundercats.queuer.database.ProjectOpenHelper}.
@@ -100,13 +100,28 @@ public class ProjectDataSource {
                 values);
 
         // Get a Cursor over the row that was just inserted
-        Cursor cursor = database.query(
+        Cursor cursor = query(ProjectOpenHelper.COLUMN_LOCAL_ID + " = " + insertId);
+        // move the cursor to the first row
+        cursor.moveToFirst();
+        // Create a project from the cursor
+        Project newProject = cursorToProject(cursor);
+        cursor.close();
+        return newProject;
+    }
+
+    /**
+     * Queries all the columns in the database, given a whereClause.
+     *
+     * @param selection Formatted as a SQL WHERE clause. Will crash if this contains "?"
+     */
+    public Cursor query(String selection) {
+        return database.query(
                 // the table to compile the query against
                 ProjectOpenHelper.TABLE_PROJECTS,
                 // a list of which columns to return
                 allColumns,
                 // whereClause for row filtering - query rows that match insertId
-                ProjectOpenHelper.COLUMN_LOCAL_ID + " = " + insertId,
+                selection,
                 // whereArgs - there are none...
                 null,
                 // groupBy filter declaring how to group rows
@@ -115,12 +130,6 @@ public class ProjectDataSource {
                 null,
                 // SQL ORDER BY filter
                 null);
-        // move the cursor to the first row
-        cursor.moveToFirst();
-        // Create a project from the cursor
-        Project newProject = cursorToProject(cursor);
-        cursor.close();
-        return newProject;
     }
 
     /**
@@ -149,8 +158,7 @@ public class ProjectDataSource {
         ArrayList<Project> projects = new ArrayList<Project>();
 
         // Get a cursor over the entire database
-        Cursor cursor = database.query(ProjectOpenHelper.TABLE_PROJECTS,
-                allColumns, null, null, null, null, null);
+        Cursor cursor = query(null);
 
         // Move the cursor to the first row
         cursor.moveToFirst();
@@ -230,7 +238,7 @@ public class ProjectDataSource {
     private void update(Project project, ContentValues values) {
         database.update(ProjectOpenHelper.TABLE_PROJECTS, values,
                 // whereClause - overwrite where a the ID column is whereArgs
-                ProjectOpenHelper.COLUMN_LOCAL_ID + " = " + WHERE_ARGS,
+                ProjectOpenHelper.COLUMN_LOCAL_ID + " = ?",
                 // whereArgs - overwrite the row that corresponds to a project's local ID
                 new String[]{String.valueOf(project.getLocalId())});
     }

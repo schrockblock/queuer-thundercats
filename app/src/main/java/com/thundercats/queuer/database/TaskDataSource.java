@@ -5,8 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.appcompat.R;
-import android.widget.Toast;
 
 import com.thundercats.queuer.models.Task;
 
@@ -14,7 +12,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Created by eschrock on 1/21/14.
+ * The class responsible for saving {@link com.thundercats.queuer.models.Task}s locally.
+ *
+ * @author Kevin Chen
  */
 public class TaskDataSource {
     // Database fields
@@ -28,8 +28,6 @@ public class TaskDataSource {
             TaskOpenHelper.COLUMN_POSITION,
             TaskOpenHelper.COLUMN_CREATED,
             TaskOpenHelper.COLUMN_UPDATED};
-    // the symbol for whereArgs
-    private final String WHERE_ARGS = "?";
 
     /**
      * Initializes the {@link com.thundercats.queuer.database.TaskOpenHelper}.
@@ -82,16 +80,14 @@ public class TaskDataSource {
     }
 
     /**
-     * Creates a row of cells from the given {@code Task} parameters.
-     * Inserts the row into the database.
-     * Get a {@code Cursor} over the inserted row.
+     * Writes a {@code Task} to database, given {@code Task} parameters.
      *
      * @param text      The name of the {@code Task}.
      * @param projectId The server ID of the {@code Project} to which the {@code Task} belongs.
      * @param serverId  The server ID of the {@code Task}.
      * @param position  The position of the {@code Task}.
      * @param completed Whether or not the {@code Task} is finished.
-     * @return
+     * @return The {@code Task} that was just inserted into the database.
      */
     public Task createTask(String text, int projectId, int serverId, int position, boolean completed) {
         // create the row of cells
@@ -189,7 +185,7 @@ public class TaskDataSource {
     public void deleteTask(Task task) {
         String[] whereArgs = new String[]{Integer.toString(task.getLocalId())};
         database.delete(TaskOpenHelper.TABLE_TASKS,
-                TaskOpenHelper.COLUMN_ID + " = " + WHERE_ARGS,
+                TaskOpenHelper.COLUMN_ID + " = ?",
                 whereArgs);
     }
 
@@ -204,7 +200,7 @@ public class TaskDataSource {
         // Cursor over rows whose projectServerIDs match the param
         Cursor cursor = database.query(TaskOpenHelper.TABLE_TASKS,
                 allColumns,
-                TaskOpenHelper.COLUMN_PROJECT_SERVER_ID + " = " + WHERE_ARGS,
+                TaskOpenHelper.COLUMN_PROJECT_SERVER_ID + " = ?",
                 new String[]{String.valueOf(projectServerID)},
                 null, null, null);
         // Add the tasks to the list, scanning row by row
@@ -268,7 +264,7 @@ public class TaskDataSource {
     public void update(Task task, ContentValues values) {
         database.update(TaskOpenHelper.TABLE_TASKS,
                 values,
-                TaskOpenHelper.COLUMN_ID + " = " + WHERE_ARGS,
+                TaskOpenHelper.COLUMN_ID + " = ?",
                 new String[]{String.valueOf(task.getLocalId())}
         );
     }
