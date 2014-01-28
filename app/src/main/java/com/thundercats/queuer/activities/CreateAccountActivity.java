@@ -4,22 +4,63 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.thundercats.queuer.R;
 
 
 public class CreateAccountActivity extends ActionBarActivity {
+    EditText user;
+    EditText pass;
+    Button createAccount;
+
+    private boolean checkEditText(EditText edit) {
+        return edit.getText().length() == 0;
+    }
+
+    void updateButtonState() {
+        if(checkEditText(user) && checkEditText(pass)) createAccount.setEnabled(false);
+        else createAccount.setEnabled(true);
+    }
+
+
+    private class LocalTextWatcher implements TextWatcher {
+        public void afterTextChanged(Editable s) {
+            updateButtonState();
+        }
+
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
+
+        user = (EditText) findViewById(R.id.et_username);
+        pass = (EditText) findViewById(R.id.et_password);
+        createAccount = (Button) findViewById(R.id.btn_create_account);
+
+        //monitor EditText fields for entered text
+        TextWatcher watcher = new LocalTextWatcher();
+        user.addTextChangedListener(watcher);
+        pass.addTextChangedListener(watcher);
+
+        //updates button based on input from TextWatcher
+        updateButtonState();
 
     }
 
