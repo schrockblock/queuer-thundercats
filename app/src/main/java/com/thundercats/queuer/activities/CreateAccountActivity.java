@@ -1,5 +1,6 @@
 package com.thundercats.queuer.activities;
 
+import android.provider.SyncStateContract;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -16,9 +17,12 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.thundercats.queuer.R;
+import com.thundercats.queuer.constants.Server;
+import com.thundercats.queuer.interfaces.LoginManagerCallback;
+import com.thundercats.queuer.managers.LoginManager;
 
 
-public class CreateAccountActivity extends ActionBarActivity {
+public class CreateAccountActivity extends ActionBarActivity implements LoginManagerCallback {
     EditText user;
     EditText pass;
     Button createAccount;
@@ -62,6 +66,22 @@ public class CreateAccountActivity extends ActionBarActivity {
         //updates button based on input from TextWatcher
         updateButtonState();
 
+        createAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //startedRequest
+                final String username =  user.getText().toString();
+                final String password = pass.getText().toString();
+                LoginManager newAccountManager = LoginManager.getInstance();
+                newAccountManager.setCallback(CreateAccountActivity.this, CreateAccountActivity.this);
+                try{
+                    newAccountManager.login(username, password, Server.QUEUER_CREATE_ACCOUNT_URL);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 
 
@@ -100,5 +120,15 @@ public class CreateAccountActivity extends ActionBarActivity {
             return rootView;
         }
     }
+
+    @Override
+    public void startedRequest() {
+
+    }
+
+    public void finishedRequest(boolean finished){
+
+    }
+
 
 }

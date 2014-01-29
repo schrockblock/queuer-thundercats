@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.thundercats.queuer.R;
+import com.thundercats.queuer.constants.Server;
 import com.thundercats.queuer.interfaces.LoginManagerCallback;
 import com.thundercats.queuer.managers.LoginManager;
 
@@ -144,7 +145,7 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
                     showProgressBar(true);
                     textView.setVisibility(View.VISIBLE);
                     textView.setText("Logging in...");
-                    manager.login(username, password);
+                    manager.login(username, password, Server.QUEUER_SESSION_URL);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

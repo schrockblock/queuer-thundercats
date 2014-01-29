@@ -28,6 +28,8 @@ import java.io.UnsupportedEncodingException;
  */
 public class LoginManager {
 
+    private String URL;
+
     /**
      * The context of the callback.
      */
@@ -46,7 +48,6 @@ public class LoginManager {
     /**
      * Private constructor. Cannot publicly instantiate LoginManager since it's a singleton.
      */
-    private LoginManager() {}
 
     /**
      * Returns the singleton LoginManager.
@@ -72,8 +73,9 @@ public class LoginManager {
      * @param password The entered password.
      * @throws Exception If the callback is null.
      */
-    public void login(String username, String password) throws Exception {
+    public void login(String username, String password, String URL) throws Exception {
         if (callback == null) throw new Exception("Null callback");
+        this.URL = URL;
         callback.startedRequest();
         authenticate(username, password);
     }
@@ -140,7 +142,7 @@ public class LoginManager {
         ((QueuerApplication) context.getApplicationContext()).setRequestQueue(Volley.newRequestQueue(context));
 
         // Get server URL
-        String server = context.getString(R.string.server);
+        String server = URL;
 
         // CREATE JSON
         JSONObject jsonObject = createJSONObject(username, password);
@@ -157,7 +159,7 @@ public class LoginManager {
         Response.ErrorListener errorListener = createErrorListener();
 
         // ADD TO REQUEST QUEUE
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, server, jsonObject, listener, errorListener) {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, server, jsonObject, listener, errorListener) {
             protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
                 try {
                     String json = new String(
