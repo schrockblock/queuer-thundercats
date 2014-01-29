@@ -31,13 +31,29 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
     private final String LOGIN_PREFS_USERNAME_KEY = "username";
     private final String LOGIN_PREFS_PASSWORD_KEY = "password";
     private final String LOGIN_PREFS_REMEMBER_KEY = "remember";
-    EditText user;
-    EditText pass;
-    Button login;
+    private EditText user;
+    private EditText pass;
+    private Button login;
 
+    private void showProgressLabel(boolean shown) {
+        final TextView textView = (TextView) findViewById(R.id.progress_text);
+        if (shown) textView.setVisibility(View.VISIBLE);
+        else textView.setVisibility(View.INVISIBLE);
+    }
+
+    private void setProgressLabel(String s) {
+        final TextView textView = (TextView) findViewById(R.id.progress_text);
+        textView.setText(s);
+    }
+
+    private void setEnabledFields(boolean enabled) {
+        user.setEnabled(enabled);
+        pass.setEnabled(enabled);
+    }
 
     /**
      * Shows/hides the progress bar.
+     *
      * @param shown Whether or not the progress bar is shown.
      */
     private void showProgressBar(boolean shown) {
@@ -50,15 +66,18 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
      * Indicate to the user (by showing the progress bar) that the Volley request has been created.
      */
     public void startedRequest() {
+        setEnabledFields(false);
         showProgressBar(true);
+        showProgressLabel(true);
+        setProgressLabel("Logging in...");
     }
 
-    private boolean checkEditText(EditText edit) {
+    private boolean isEmpty(EditText edit) {
         return edit.getText().length() == 0;
     }
 
-    void updateButtonState() {
-        if(checkEditText(user) || checkEditText(pass)) login.setEnabled(false);
+    private void updateButtonState() {
+        if (isEmpty(user) || isEmpty(pass)) login.setEnabled(false);
         else login.setEnabled(true);
     }
 
@@ -78,24 +97,18 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
 
     /**
      * Indicate to the user that the login operation has terminated.
+     *
      * @param successful Whether the login was successful.
      */
     public void finishedRequest(boolean successful) {
-        if (successful) {
-            // TODO SHOW THE NEXT SCREEN (WHICH WE DON'T HAVE) and stop the request queue
-        }
-        else {
-            showProgressBar(false);
-            final TextView textView = (TextView) findViewById(R.id.progress_text);
-            textView.setVisibility(View.VISIBLE);
-            textView.setText("Login unsuccessful. Try again.");
-        }
+        setEnabledFields(true);
+        showProgressBar(false);
+        if (successful) startActivity(new Intent(this, FeedActivity.class));
+        else setProgressLabel("Login unsuccessful.");
     }
 
-    public void buttonClicked(View v){
-
-        Intent newIntent = new Intent(this, CreateAccountActivity.class);
-        startActivity(newIntent);
+    public void buttonCreateAccountClicked(View v) {
+        startActivity(new Intent(this, CreateAccountActivity.class));
     }
 
     @Override
@@ -112,17 +125,12 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
 
         login = (Button) findViewById(R.id.btn_login);
 
-        final Button createAccount = (Button) findViewById(R.id.btn_create_account);
-
         //monitor EditText fields for entered text
         TextWatcher watcher = new LocalTextWatcher();
         user.addTextChangedListener(watcher);
         pass.addTextChangedListener(watcher);
 
-        //updates button based on input from TextWatcher
-        updateButtonState();
-
-
+        //updatebuttonstate?
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,7 +162,7 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
 
         // If we are "remembering", then fill in the fields
         SharedPreferences preferences = getSharedPreferences(LOGIN_PREFS_FILE_NAME, MODE_PRIVATE);
-        if (preferences.getBoolean(LOGIN_PREFS_REMEMBER_KEY, false)){
+        if (preferences.getBoolean(LOGIN_PREFS_REMEMBER_KEY, false)) {
             user.setText(preferences.getString(LOGIN_PREFS_USERNAME_KEY, ""));
             pass.setText(preferences.getString(LOGIN_PREFS_PASSWORD_KEY, ""));
             remember.setChecked(true);
@@ -188,7 +196,7 @@ public class LoginActivity extends ActionBarActivity implements LoginManagerCall
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_login, container, false);
             return rootView;
         }

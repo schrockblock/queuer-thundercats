@@ -1,8 +1,7 @@
 package com.thundercats.queuer.activities;
 
-import android.provider.SyncStateContract;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,9 +11,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.thundercats.queuer.R;
 import com.thundercats.queuer.constants.Server;
@@ -23,20 +24,57 @@ import com.thundercats.queuer.managers.LoginManager;
 
 
 public class CreateAccountActivity extends ActionBarActivity implements LoginManagerCallback {
-    EditText user;
-    EditText pass;
-    Button createAccount;
 
-    private boolean checkEditText(EditText edit) {
+    private final String ACTIVITY_TITLE = "Create Account";
+    private EditText user;
+    private EditText pass;
+    private Button createAccount;
+
+    private void setEnabledFields(boolean enabled) {
+        user.setEnabled(enabled);
+        pass.setEnabled(enabled);
+    }
+
+    /**
+     * Shows/hides the progress bar.
+     *
+     * @param shown Whether or not the progress bar is shown.
+     */
+    private void showProgressBar(boolean shown) {
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        if (shown) progressBar.setVisibility(View.VISIBLE);
+        else progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void showProgressLabel(boolean shown) {
+        final TextView textView = (TextView) findViewById(R.id.progress_text);
+        if (shown) textView.setVisibility(View.VISIBLE);
+        else textView.setVisibility(View.INVISIBLE);
+    }
+
+    private void setProgressLabel(String s) {
+        ((TextView) findViewById(R.id.progress_text)).setText(s);
+    }
+
+    /**
+     * Returns true if the EditText is empty, false otherwise.
+     */
+    private boolean isEmpty(EditText edit) {
         return edit.getText().length() == 0;
     }
 
-    void updateButtonState() {
-        if(checkEditText(user) || checkEditText(pass)) createAccount.setEnabled(false);
+    /**
+     * Enables/disables the Create Account Button depending on whether the user
+     * has entered input in both fields.
+     */
+    private void updateButtonState() {
+        if (isEmpty(user) || isEmpty(pass)) createAccount.setEnabled(false);
         else createAccount.setEnabled(true);
     }
 
-
+    /**
+     * Calls updateButtonState after each keystroke.
+     */
     private class LocalTextWatcher implements TextWatcher {
         public void afterTextChanged(Editable s) {
             updateButtonState();
@@ -54,6 +92,9 @@ public class CreateAccountActivity extends ActionBarActivity implements LoginMan
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(ACTIVITY_TITLE);
+
         user = (EditText) findViewById(R.id.et_username);
         pass = (EditText) findViewById(R.id.et_password);
         createAccount = (Button) findViewById(R.id.btn_create_account);
@@ -69,14 +110,15 @@ public class CreateAccountActivity extends ActionBarActivity implements LoginMan
         createAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 //startedRequest
-                final String username =  user.getText().toString();
+                final String username = user.getText().toString();
                 final String password = pass.getText().toString();
                 LoginManager newAccountManager = LoginManager.getInstance();
                 newAccountManager.setCallback(CreateAccountActivity.this, CreateAccountActivity.this);
-                try{
+                try {
                     newAccountManager.login(username, password, Server.QUEUER_CREATE_ACCOUNT_URL);
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -84,10 +126,9 @@ public class CreateAccountActivity extends ActionBarActivity implements LoginMan
 
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.create_account, menu);
         return true;
@@ -95,9 +136,6 @@ public class CreateAccountActivity extends ActionBarActivity implements LoginMan
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
@@ -115,7 +153,7 @@ public class CreateAccountActivity extends ActionBarActivity implements LoginMan
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_create_account, container, false);
             return rootView;
         }
@@ -123,11 +161,17 @@ public class CreateAccountActivity extends ActionBarActivity implements LoginMan
 
     @Override
     public void startedRequest() {
-
+        setEnabledFields(false);
+        showProgressBar(true);
+        showProgressLabel(true);
+        setProgressLabel("Creating an account...");
     }
 
-    public void finishedRequest(boolean finished){
-
+    public void finishedRequest(boolean successful) {
+        setEnabledFields(true);
+        showProgressBar(false);
+        if (successful) setProgressLabel("SUCCESS");
+        else setProgressLabel("Failed to create account!");
     }
 
 

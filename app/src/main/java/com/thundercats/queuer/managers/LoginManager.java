@@ -28,6 +28,11 @@ import java.io.UnsupportedEncodingException;
  */
 public class LoginManager {
 
+    /**
+     * Used in {@link com.thundercats.queuer.activities.CreateAccountActivity}
+     * and {@link com.thundercats.queuer.activities.LoginActivity}, depending
+     * on which server you want to access.
+     */
     private String URL;
 
     /**
@@ -160,6 +165,8 @@ public class LoginManager {
 
         // ADD TO REQUEST QUEUE
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, server, jsonObject, listener, errorListener) {
+
+
             protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
                 try {
                     String json = new String(
