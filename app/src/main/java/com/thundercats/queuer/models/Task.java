@@ -136,7 +136,7 @@ public class Task {
      *
      * @param name The new name of this {@code Task}.
      */
-    public void setName(String name) {
+    public void setName(String name, Context context) {
         this.name = name;
         TaskDataSource dataSource = new TaskDataSource(context);
         dataSource.open();
@@ -177,7 +177,7 @@ public class Task {
      *
      * @param position The new position of this {@code Task}.
      */
-    public void setPosition(int position) {
+    public void setPosition(int position, Context context) {
         this.position = position;
         TaskDataSource dataSource = new TaskDataSource(context);
         dataSource.open();
@@ -199,7 +199,7 @@ public class Task {
      *
      * @param finished Whether or not this {@code Task} is finished.
      */
-    public void setFinished(boolean finished) {
+    public void setFinished(boolean finished, Context context) {
         this.finished = finished;
         TaskDataSource dataSource = new TaskDataSource(context);
         dataSource.open();
@@ -239,7 +239,7 @@ public class Task {
      *
      * @param updated_at When this {@code Task} was last updated.
      */
-    public void setUpdated_at(Date updated_at) {
+    public void setUpdated_at(Date updated_at, Context context) {
         this.updated_at = updated_at;
         TaskDataSource dataSource = new TaskDataSource(context);
         dataSource.open();

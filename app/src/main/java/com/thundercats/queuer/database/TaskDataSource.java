@@ -190,6 +190,33 @@ public class TaskDataSource {
     }
 
     /**
+     * Returns a list of all {@code Task}s that belong to a certain {@code Project}.
+     *
+     * @param projectServerID Returns tasks that all share the same project server ID.
+     * @return A list
+     */
+    public ArrayList<Task> getUnfinishedTasks(int projectServerID) {
+        ArrayList<Task> unfinishedTasks = new ArrayList<Task>();
+        // Cursor over rows whose projectServerIDs match the param
+        Cursor cursor = query(TaskOpenHelper.COLUMN_PROJECT_SERVER_ID + " = ?",
+                new String[]{String.valueOf(projectServerID)});
+        // Look at the first Task
+        if (cursor.moveToFirst()) {
+            Task firstTask = cursorToTask(cursor);
+            if (!firstTask.isFinished())
+                unfinishedTasks.add(firstTask);
+            // Look at all subsequent Tasks
+            while (cursor.moveToNext()) {
+                Task nextTask = cursorToTask(cursor);
+                if (!nextTask.isFinished())
+                    unfinishedTasks.add(nextTask);
+            }
+        }
+        cursor.close();
+        return unfinishedTasks;
+    }
+
+    /**
      * Returns a list of all {@code Task}s that belong to a certain project.
      *
      * @param projectServerID Returns tasks that all share the same project server ID.
@@ -198,11 +225,8 @@ public class TaskDataSource {
     public ArrayList<Task> getTasks(int projectServerID) {
         ArrayList<Task> tasks = new ArrayList<Task>();
         // Cursor over rows whose projectServerIDs match the param
-        Cursor cursor = database.query(TaskOpenHelper.TABLE_TASKS,
-                allColumns,
-                TaskOpenHelper.COLUMN_PROJECT_SERVER_ID + " = ?",
-                new String[]{String.valueOf(projectServerID)},
-                null, null, null);
+        Cursor cursor = query(TaskOpenHelper.COLUMN_PROJECT_SERVER_ID + " = ?",
+                new String[]{String.valueOf(projectServerID)});
         // Add the tasks to the list, scanning row by row
         if (cursor.moveToFirst()) {
             tasks.add(cursorToTask(cursor));
@@ -222,8 +246,7 @@ public class TaskDataSource {
     public ArrayList<Task> getAllTasks() {
         ArrayList<Task> tasks = new ArrayList<Task>();
         // A cursor over the entire database
-        Cursor cursor = database.query(TaskOpenHelper.TABLE_TASKS,
-                allColumns, null, null, null, null, null);
+        Cursor cursor = query(null);
         // Add the tasks to the list, scanning row by row
         if (cursor.moveToFirst()) {
             tasks.add(cursorToTask(cursor));
@@ -256,12 +279,36 @@ public class TaskDataSource {
     }
 
     /**
+     * Return a cursor over the entire database.
+     *
+     * @param selection Specifies which rows should be filtered.
+     * @return A cursor of rows selected from the database.
+     */
+    private Cursor query(String selection) {
+        return database.query(TaskOpenHelper.TABLE_TASKS,
+                allColumns, selection, null, null, null, null);
+    }
+
+    /**
+     * Return a cursor over the entire database.
+     *
+     * @param selection     Specifies which rows should be filtered.
+     *                      Must have "?" for selectionArgs.
+     * @param selectionArgs Specifies what the "?" is in selection.
+     * @return A cursor of rows selected from the database.
+     */
+    private Cursor query(String selection, String[] selectionArgs) {
+        return database.query(TaskOpenHelper.TABLE_TASKS,
+                allColumns, selection, selectionArgs, null, null, null);
+    }
+
+    /**
      * Writes a {@code Task} to the database with new values.
      *
      * @param task   The {@code Task} to update.
      * @param values The new values of the {@code Task} that will be written.
      */
-    public void update(Task task, ContentValues values) {
+    private void update(Task task, ContentValues values) {
         database.update(TaskOpenHelper.TABLE_TASKS,
                 values,
                 TaskOpenHelper.COLUMN_ID + " = ?",
