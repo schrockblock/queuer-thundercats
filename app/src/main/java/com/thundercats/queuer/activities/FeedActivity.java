@@ -21,6 +21,8 @@ import com.thundercats.queuer.models.Task;
 import com.thundercats.queuer.views.EnhancedListView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by kmchen1 on 1/15/14.
@@ -161,11 +163,27 @@ public class FeedActivity extends ActionBarActivity {
             @Override
             public EnhancedListView.Undoable onDismiss(EnhancedListView listView, final int position) {
                 final Project project = adapter.getItem(position);
-                adapter.remove(position);
+                final int projectServerID = project.getId();
+                TaskDataSource dataSource = new TaskDataSource(getApplicationContext());
+                dataSource.open();
+                ArrayList<Task> unfinishedTasks = dataSource.getUnfinishedTasks(projectServerID);
+                Collections.sort(unfinishedTasks, new Comparator<Task>() {
+                    // TODO the ordering may be wrong here, but we want Task at position 0
+                    @Override
+                    public int compare(Task task, Task task2) {
+                        return task.compareTo(task2);
+                    }
+                });
+                dataSource.close();
+                final Task task = unfinishedTasks.get(0);
+                task.setFinished(true, getApplicationContext());
+                syncFeedAdapterWithDatabase();
+
                 return new EnhancedListView.Undoable() {
                     @Override
                     public void undo() {
-                        adapter.insert(project, position);
+                        task.setFinished(false, getApplicationContext());
+                        syncFeedAdapterWithDatabase();
                     }
                 };
             }

@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Created by kmchen1 on 1/17/14.
  */
-public class Task {
+public class Task implements Comparable<Task> {
 
     /**
      * The server ID of the {@code Project} to which this {@code Task} belongs.
@@ -256,5 +256,20 @@ public class Task {
     @Override
     public boolean equals(Object o) {
         return ((Task) o).getId() == getId();
+    }
+
+    /**
+     * Compares two {@code Task}s.
+     *
+     * @param task The {@code Task} being compared.
+     * @return negative if this {@code Task} has a server ID
+     * that is less than that of the argument {@code Task},
+     * and positive if the opposite is true.
+     * Returns 0 if the server IDs are the same; however, this
+     * should never happen.
+     */
+    @Override
+    public int compareTo(Task task) {
+        return Integer.valueOf(getPosition()).compareTo(Integer.valueOf(task.getPosition()));
     }
 }
