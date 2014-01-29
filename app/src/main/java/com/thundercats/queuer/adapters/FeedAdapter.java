@@ -63,7 +63,7 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener, P
     private ArrayList<Project> projects = new ArrayList<Project>();
 
     /**
-     * The Context (in this case, the activity) under which this adapter is constructed.
+     * The Context under which this adapter is constructed.
      */
     private Context context;
 

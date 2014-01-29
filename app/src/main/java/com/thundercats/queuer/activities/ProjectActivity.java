@@ -118,11 +118,15 @@ public class ProjectActivity extends ActionBarActivity {
             @Override
             public EnhancedListView.Undoable onDismiss(EnhancedListView listView, final int position) {
                 final Task task = adapter.getItem(position);
-                adapter.remove(position);
+                task.setFinished(true, getApplicationContext());
+                syncProjectAdapterWithDatabase();
+                //adapter.notifyDataSetChanged();
                 return new EnhancedListView.Undoable() {
                     @Override
                     public void undo() {
-                        adapter.insert(task, position);
+                        task.setFinished(false, getApplicationContext());
+                        syncProjectAdapterWithDatabase();
+                        //adapter.notifyDataSetChanged();
                     }
                 };
             }
@@ -145,7 +149,7 @@ public class ProjectActivity extends ActionBarActivity {
     private void syncProjectAdapterWithDatabase() {
         TaskDataSource taskDataSource = new TaskDataSource(this);
         taskDataSource.open();
-        ArrayList<Task> tasks = taskDataSource.getTasks(project_id);
+        ArrayList<Task> tasks = taskDataSource.getUnfinishedTasks(project_id);
         taskDataSource.close();
         adapter = new ProjectAdapter(this, tasks);
         ((EnhancedListView) findViewById(R.id.lv_tasks)).setAdapter(adapter);
