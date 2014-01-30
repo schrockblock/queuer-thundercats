@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.thundercats.queuer.R;
 import com.thundercats.queuer.adapters.FeedAdapter;
@@ -83,14 +84,10 @@ public class CreateProjectActivity extends ActionBarActivity {
             return;
         }
 
-        // Get the FeedAdapter from the calling activity
-        FeedAdapter feedAdapter = (FeedAdapter) getIntent().getParcelableExtra(FeedAdapter.INTENT_KEY);
-        // Get the next available unique ID
-        int id = feedAdapter.getNextID();
-
         // Set intent with data
         Intent result = new Intent();
-        result.putExtra(Project.INTENT_KEY, new Project(this, id, projectName, color));
+        Toast.makeText(this, "Project " + projectName + ", " + color, Toast.LENGTH_LONG).show();
+        result.putExtra(Project.INTENT_KEY, new Project(this, projectName, color));
         setResult(RESULT_OK, result);
         finish();
     }

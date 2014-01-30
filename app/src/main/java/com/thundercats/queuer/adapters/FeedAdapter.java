@@ -63,7 +63,7 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener, P
     private ArrayList<Project> projects = new ArrayList<Project>();
 
     /**
-     * The Context (in this case, the activity) under which this adapter is constructed.
+     * The Context under which this adapter is constructed.
      */
     private Context context;
 
@@ -116,16 +116,6 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener, P
     }
 
     /**
-     * Returns the next available unique project ID.
-     *
-     * @return Since projects cannot be deleted, the next available (zero-indexed)
-     * unique project ID will be the number of total projects.
-     */
-    public int getNextID() {
-        return projects.size();
-    }
-
-    /**
      * Removes all hidden projects from the list of visible projects.
      */
     private void refreshVisibleProjects() {
@@ -137,7 +127,7 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener, P
     }
 
     /**
-     * Refreshes the visible projects.
+     * Causes views to refresh themselves (i.e., getView is called).
      */
     @Override
     public void notifyDataSetChanged() {
@@ -212,6 +202,11 @@ public class FeedAdapter extends BaseAdapter implements RearrangementListener, P
         return visibleProjects.size();
     }
 
+    /**
+     * This method only returns items/projects that are visible.
+     * @param i
+     * @return
+     */
     @Override
     public Project getItem(int i) {
         return visibleProjects.get(i);

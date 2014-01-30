@@ -15,10 +15,14 @@ import android.widget.Toast;
 import com.thundercats.queuer.R;
 import com.thundercats.queuer.adapters.FeedAdapter;
 import com.thundercats.queuer.database.ProjectDataSource;
+import com.thundercats.queuer.database.TaskDataSource;
 import com.thundercats.queuer.models.Project;
+import com.thundercats.queuer.models.Task;
 import com.thundercats.queuer.views.EnhancedListView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by kmchen1 on 1/15/14.
@@ -44,10 +48,9 @@ public class FeedActivity extends ActionBarActivity {
             if (resultCode == RESULT_OK) {
                 Bundle data = intentResult.getExtras();
                 Project project = data.getParcelable(Project.INTENT_KEY);
-                if (project == null)
-                    Toast.makeText(this, "NULL PROJECT PASSED BACK!", Toast.LENGTH_SHORT).show();
-                adapter.add(project);
-                refreshNoProjectsWarning();
+                //don't need following since project already written to DB in CreateProjectActivity
+                //adapter.add(project);
+                syncFeedAdapterWithDatabase();
             }
         }
     }
@@ -66,13 +69,44 @@ public class FeedActivity extends ActionBarActivity {
             case R.id.action_create_project:
                 // The Intent for going to the "Create New Project" screen
                 Intent intent = new Intent(FeedActivity.this, CreateProjectActivity.class);
-                // FeedAdapter must be passed since it's used for getNextID();
-                intent.putExtra(FeedAdapter.INTENT_KEY, adapter);
                 startActivityForResult(intent, CREATE_PROJECT_REQUEST);
                 return true;
+            case R.id.action_wipe_database:
+                deleteAllProjects();
+                deleteAllTasks();
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /** Deletes all tasks. */
+    private void deleteAllTasks() {
+        TaskDataSource dataSource = new TaskDataSource(this);
+        dataSource.open();
+        dataSource.deleteAllTasks();
+        dataSource.close();
+    }
+
+    /** Deletes all projects, resets the adapter, and refreshes screen. */
+    private void deleteAllProjects() {
+        ProjectDataSource dataSource = new ProjectDataSource(this);
+        dataSource.open();
+        dataSource.deleteAllProjects();
+        dataSource.close();
+
+        adapter = new FeedAdapter(this, new ArrayList<Project>());
+        refreshNoProjectsWarning();
+    }
+
+    /** Re-initializes adapter with {@code Project}s in the database. */
+    private void syncFeedAdapterWithDatabase() {
+        ProjectDataSource projectDataSource = new ProjectDataSource(this);
+        projectDataSource.open();
+        ArrayList<Project> projects = projectDataSource.getAllProjects();
+        projectDataSource.close();
+        adapter = new FeedAdapter(this, projects);
+        ((EnhancedListView) findViewById(R.id.lv_projects)).setAdapter(adapter);
+        refreshNoProjectsWarning();
     }
 
     /**
@@ -122,28 +156,34 @@ public class FeedActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(ACTIVITY_TITLE);
 
-        ProjectDataSource projectDataSource = new ProjectDataSource(this);
-        projectDataSource.open();
-        ArrayList<Project> projects = projectDataSource.getAllProjects();
-        projectDataSource.close();
-
         EnhancedListView listView = (EnhancedListView) findViewById(R.id.lv_projects);
-        adapter = new FeedAdapter(this, projects);
-        listView.setAdapter(adapter);
-
-        // If there are no projects left, show warning
-        refreshNoProjectsWarning();
+        syncFeedAdapterWithDatabase();
 
         listView.setDismissCallback(new EnhancedListView.OnDismissCallback() {
             @Override
             public EnhancedListView.Undoable onDismiss(EnhancedListView listView, final int position) {
-                Toast.makeText(FeedActivity.this, "Clicked on item " + adapter.getItem(position), Toast.LENGTH_SHORT).show();
                 final Project project = adapter.getItem(position);
-                adapter.remove(position);
+                final int projectServerID = project.getId();
+                TaskDataSource dataSource = new TaskDataSource(getApplicationContext());
+                dataSource.open();
+                ArrayList<Task> unfinishedTasks = dataSource.getUnfinishedTasks(projectServerID);
+                Collections.sort(unfinishedTasks, new Comparator<Task>() {
+                    // TODO the ordering may be wrong here, but we want Task at position 0
+                    @Override
+                    public int compare(Task task, Task task2) {
+                        return task.compareTo(task2);
+                    }
+                });
+                dataSource.close();
+                final Task task = unfinishedTasks.get(0);
+                task.setFinished(true, getApplicationContext());
+                syncFeedAdapterWithDatabase();
+
                 return new EnhancedListView.Undoable() {
                     @Override
                     public void undo() {
-                        adapter.insert(project, position);
+                        task.setFinished(false, getApplicationContext());
+                        syncFeedAdapterWithDatabase();
                     }
                 };
             }
@@ -152,12 +192,7 @@ public class FeedActivity extends ActionBarActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(FeedActivity.this, ProjectActivity.class);
-                // The ProjectActivity needs the project ID of the clicked Project
-                intent.putExtra(Project.PROJECT_ID_INTENT_KEY, adapter.getItemId(position));
-                // and also the Project that was clicked...
-                intent.putExtra(Project.INTENT_KEY, adapter.getItem(position));
-                startActivity(intent);
+                projectClicked(adapter.getItem(position));
             }
         });
 
@@ -165,5 +200,32 @@ public class FeedActivity extends ActionBarActivity {
         listView.enableRearranging();
     }
 
+    /** Calls new activity. Passes project via Intent. */
+    private void projectClicked(Project project) {
+        Intent intent = new Intent(FeedActivity.this, ProjectActivity.class);
+        intent.putExtra(Project.INTENT_KEY, project);
+        printDiagnostics(project);
+        startActivity(intent);
+    }
 
+    /** Prints a {@code Project}'s fields for diagnosis. */
+    private void printDiagnostics(Project project) {
+        String d = "Title: " + project.getTitle() + "\n"
+                + "LocalID: " + project.getLocalId() + "\n"
+                + "ServerID: " + project.getId() + "\n"
+                + "Color: " + project.getColor() + "\n"
+                + "Created: " + project.getCreated_at() + "\n"
+                + "Updated: " + project.getUpdated_at();
+        print(d);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
+    }
+
+    private void print(String s) {
+        Toast.makeText(this, s, Toast.LENGTH_LONG).show();
+    }
 }
