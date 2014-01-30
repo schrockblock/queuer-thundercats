@@ -9,16 +9,20 @@
         android:targetSdkVersion="19" />
 
     <application
-        android:debuggable="true"
-        android:name=".QueuerApplication"
+        android:name="com.thundercats.queuer.QueuerApplication"
         android:allowBackup="true"
+        android:debuggable="true"
         android:icon="@drawable/icon_thundercats"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
         <activity
-            android:name=".activities.LoginActivity"
+            android:name="com.thundercats.queuer.activities.LoginActivity"
             android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity
@@ -32,19 +36,17 @@
         </activity>
 
         <activity
-            android:name=".activities.CreateProjectActivity"
+            android:name="com.thundercats.queuer.activities.CreateProjectActivity"
             android:label="QueuerThundercats" >
         </activity>
-
         <activity
-            android:name=".activities.FeedActivity"
+            android:name="com.thundercats.queuer.activities.FeedActivity"
             android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
-
+        <activity
+            android:name="com.thundercats.queuer.activities.CreateAccountActivity"
+            android:label="@string/title_activity_create_account" >
+        </activity>
     </application>
 
 </manifest>
