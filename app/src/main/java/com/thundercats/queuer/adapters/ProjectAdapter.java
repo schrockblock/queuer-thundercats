@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.thundercats.queuer.R;
+import com.thundercats.queuer.database.TaskDataSource;
 import com.thundercats.queuer.interfaces.RearrangementListener;
 import com.thundercats.queuer.models.Task;
 
@@ -40,25 +41,18 @@ public class ProjectAdapter extends BaseAdapter implements RearrangementListener
      * Constructs a new ProjectAdapter.
      *
      * @param context The new context.
-     */
-    public ProjectAdapter(Context context) {
-        this.context = context;
-    }
-
-    /**
-     * Constructs a new ProjectAdapter.
-     *
-     * @param context The new context.
      * @param tasks   The list of tasks.
      */
-    public ProjectAdapter(Context context, ArrayList<Task> tasks) {
+    public ProjectAdapter(Context context, ArrayList<Task> unfinishedTasks, ArrayList<Task> tasks) {
         this.context = context;
+        this.unfinishedTasks = unfinishedTasks;
         this.tasks = tasks;
-        this.unfinishedTasks = tasks;
     }
 
     /**
      * Removes all finished {@code Task}s from the list of unfinished {@code Task}s.
+     * Updates {@code Task} positions.
+     * Called every time the data set changes.
      */
     private void refreshUnfinishedTasks() {
         for (Task task : tasks) {
@@ -83,18 +77,21 @@ public class ProjectAdapter extends BaseAdapter implements RearrangementListener
      * @param position The index of the {@code Task} to be removed.
      */
     public void remove(int position) {
-        unfinishedTasks.remove(position);
-        notifyDataSetChanged();
-    }
+        final Task removedTask = unfinishedTasks.remove(position);
 
-    /**
-     * Adds a {@code Task}.
-     *
-     * @param task The {@code Task} to append.
-     */
-    public void add(Task task) {
-        if (!unfinishedTasks.contains(task)) unfinishedTasks.add(task);
-        if (!tasks.contains(task)) tasks.add(task);
+        // Remove first task
+        TaskDataSource dataSource = new TaskDataSource(context);
+        dataSource.open();
+        removedTask.setFinished(true);
+        dataSource.updateTaskFinished(removedTask, true);
+
+        // decrement positions of subsequent tasks
+        for (int i = position; i < unfinishedTasks.size(); i++) {
+            final Task task = unfinishedTasks.get(i);
+            final int newPosition = task.getPosition() - 1;
+            task.setPosition(newPosition);
+            dataSource.updateTaskPosition(task, newPosition);
+        }
         notifyDataSetChanged();
     }
 
@@ -105,10 +102,25 @@ public class ProjectAdapter extends BaseAdapter implements RearrangementListener
      * @param position The index where the {@code Task} will be inserted.
      */
     public void insert(Task task, int position) {
-        if (position < 0 || position > unfinishedTasks.size())
-            throw new IndexOutOfBoundsException("Cannot insert position " + position
-            + " when size is " + unfinishedTasks.size());
-        if (!unfinishedTasks.contains(task)) unfinishedTasks.add(position, task);
+        if (!unfinishedTasks.contains(task)) {
+
+            // put task in list
+            unfinishedTasks.add(position, task);
+
+            // write task's new position to DB
+            TaskDataSource dataSource = new TaskDataSource(context);
+            dataSource.open();
+            dataSource.updateTaskPosition(task, position);
+            task.setPosition(position);
+
+            // increment all positions of subsequent tasks
+            for (int i = position + 1; i < unfinishedTasks.size(); i++) {
+                final Task currTask = unfinishedTasks.get(i);
+                currTask.setPosition(i);
+                dataSource.updateTaskPosition(currTask, i);
+            }
+            dataSource.close();
+        }
         if (!tasks.contains(task)) tasks.add(position, task);
         notifyDataSetChanged();
     }
@@ -160,7 +172,8 @@ public class ProjectAdapter extends BaseAdapter implements RearrangementListener
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.list_task, null);
         }
-        ((TextView) convertView.findViewById(R.id.tv_title)).setText(getItem(i).getName());
+        final Task task = getItem(i);
+        ((TextView) convertView.findViewById(R.id.tv_title)).setText(task.getPosition() + ": " + task.getName());
         return convertView;
     }
 

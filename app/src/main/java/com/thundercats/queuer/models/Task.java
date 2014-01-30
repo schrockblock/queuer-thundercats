@@ -173,14 +173,9 @@ public class Task implements Comparable<Task> {
      * Sets the position of this {@code Task}.
      *
      * @param position The new position of this {@code Task}.
-     * @param context  Used to open up the database.
      */
-    public void setPosition(int position, Context context) {
+    public void setPosition(int position) {
         this.position = position;
-        TaskDataSource dataSource = new TaskDataSource(context);
-        dataSource.open();
-        dataSource.updateTaskPosition(this, position);
-        dataSource.close();
     }
 
     /**
@@ -199,11 +194,15 @@ public class Task implements Comparable<Task> {
      * @param context  Used to open up the database.
      */
     public void setFinished(boolean finished, Context context) {
-        this.finished = finished;
+        setFinished(finished);
         TaskDataSource dataSource = new TaskDataSource(context);
         dataSource.open();
         dataSource.updateTaskFinished(this, finished);
         dataSource.close();
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 
     /**

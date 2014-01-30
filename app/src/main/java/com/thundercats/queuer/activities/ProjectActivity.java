@@ -149,9 +149,10 @@ public class ProjectActivity extends ActionBarActivity {
     private void syncProjectAdapterWithDatabase() {
         TaskDataSource taskDataSource = new TaskDataSource(this);
         taskDataSource.open();
-        ArrayList<Task> tasks = taskDataSource.getUnfinishedTasks(project_id);
+        ArrayList<Task> unfinishedTasks = taskDataSource.getUnfinishedTasks(project_id);
+        ArrayList<Task> tasks = taskDataSource.getTasks(project_id);
         taskDataSource.close();
-        adapter = new ProjectAdapter(this, tasks);
+        adapter = new ProjectAdapter(this, unfinishedTasks, tasks);
         ((EnhancedListView) findViewById(R.id.lv_tasks)).setAdapter(adapter);
         refreshNoTasksWarning();
     }
@@ -251,7 +252,7 @@ public class ProjectActivity extends ActionBarActivity {
                                     return;
                                 }
                                 Task task = new Task(getApplicationContext(), name, project_id, 0);
-                                adapter.add(task);
+                                adapter.insert(task, 0);
                                 syncProjectAdapterWithDatabase();
                                 refreshNoTasksWarning();
                             }
