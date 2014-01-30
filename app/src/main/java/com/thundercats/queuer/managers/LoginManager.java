@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Iterator;
 
 /**
  * Created by kmchen1 on 1/7/14.
@@ -100,6 +101,12 @@ public class LoginManager {
             public void onResponse(JSONObject response) {
                 try {
                     if (response.has("errors")) {
+                        String s = "";
+                        Iterator<String> keys = response.keys();
+                        while (keys.hasNext()) {
+                            s += keys.next() + ",";
+                        }
+                        Toast.makeText(context, s, Toast.LENGTH_LONG).show();
                         authenticatedUnsuccessfully();
                     } else {
                         authenticatedSuccessfully();
@@ -120,8 +127,11 @@ public class LoginManager {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (error.networkResponse != null)
+                if (error.networkResponse != null) {
                     Log.d("LoginActivity", "Error Response code: " + error.networkResponse.statusCode);
+                    Toast.makeText(context, "Error Response code: " + error.networkResponse.statusCode, Toast.LENGTH_LONG).show();
+                }
+                Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
                 try {
                     authenticatedUnsuccessfully();
                 } catch (Exception e) {
