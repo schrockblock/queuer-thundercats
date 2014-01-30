@@ -6,20 +6,20 @@ package com.thundercats.queuer.models;
  */
 public class LoginModel {
 
-    private final String user;
-    private final String pass;
+    private final String username;
+    private final String password;
 
-    public String getPass() {
-        return pass;
+    public String getPassword() {
+        return password;
     }
 
-    public String getUser() {
-        return user;
+    public String getUsername() {
+        return username;
     }
 
     public LoginModel(String user, String pass) {
-        this.user = user;
-        this.pass = pass;
+        this.username = user;
+        this.password = pass;
     }
 
 

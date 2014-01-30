@@ -58,9 +58,7 @@ public class LoginManager {
      * Returns the singleton LoginManager.
      * @return The singleton LoginManager.
      */
-    public static LoginManager getInstance() {
-        return instance;
-    }
+    public static LoginManager getInstance() {return instance;}
 
     /**
      * Sets the callback.
