@@ -2,6 +2,7 @@ package com.thundercats.queuer.managers;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -56,13 +57,17 @@ public class LoginManager {
 
     /**
      * Returns the singleton LoginManager.
+     *
      * @return The singleton LoginManager.
      */
-    public static LoginManager getInstance() {return instance;}
+    public static LoginManager getInstance() {
+        return instance;
+    }
 
     /**
      * Sets the callback.
-     * @param context The context of the callback.
+     *
+     * @param context  The context of the callback.
      * @param callback The callback.
      */
     public void setCallback(Context context, LoginManagerCallback callback) {
@@ -72,6 +77,7 @@ public class LoginManager {
 
     /**
      * Logs the user in.
+     *
      * @param username The entered username.
      * @param password The entered password.
      * @throws Exception If the callback is null.
@@ -85,39 +91,50 @@ public class LoginManager {
 
     /**
      * Creates a listener for the JsonObjectRequest.
+     *
      * @return A listener for the JsonObjectRequest.
      */
     private Response.Listener<JSONObject> createListener() {
         return new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.d("LoginActivity", "Success Response: " + response.toString());
-            }
-        };
-    }
-
-    /**
-     * Creates an error listener for the JsonObjectRequest.
-     * @return An error listener for the JsonObjectRequest.
-     */
-    private Response.ErrorListener createErrorListener() {
-        return new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if (error.networkResponse != null) {
-                    Log.d("LoginActivity", "Error Response code: " + error.networkResponse.statusCode);
-                    try {
+                try {
+                    if (response.has("errors")) {
                         authenticatedUnsuccessfully();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } else {
+                        authenticatedSuccessfully();
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         };
     }
 
     /**
+     * Creates an error listener for the JsonObjectRequest.
+     *
+     * @return An error listener for the JsonObjectRequest.
+     */
+    private Response.ErrorListener createErrorListener() {
+        return new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error.networkResponse != null)
+                    Log.d("LoginActivity", "Error Response code: " + error.networkResponse.statusCode);
+                try {
+                    authenticatedUnsuccessfully();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+    }
+
+    /**
      * Returns a JSONObject given a username and password.
+     *
      * @param username The entered username.
      * @param password The entered password.
      * @return A JSONObject given a username and password.
@@ -126,7 +143,6 @@ public class LoginManager {
         JSONObject jsonObject = null;
         try {
             String json = new Gson().toJson(new LoginModel(username, password));
-            Log.d("LoginManager", json);
             jsonObject = new JSONObject(json);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -137,6 +153,7 @@ public class LoginManager {
     /**
      * Calls {@link LoginManager#authenticatedSuccessfully()} if the login was successful
      * or {@link LoginManager#authenticatedUnsuccessfully()} if the login was unsuccessful.
+     *
      * @param username The entered username.
      * @param password The entered password.
      */
@@ -162,7 +179,9 @@ public class LoginManager {
         Response.ErrorListener errorListener = createErrorListener();
 
         // ADD TO REQUEST QUEUE
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, server, jsonObject, listener, errorListener) {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, server, jsonObject, listener, errorListener);
+        /*
+        {
 
 
             protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
@@ -178,12 +197,14 @@ public class LoginManager {
                 }
             }
         };
+        */
         ((QueuerApplication) context.getApplicationContext()).getRequestQueue().add(request);
 
     }
 
     /**
      * Calls {@link com.thundercats.queuer.activities.LoginActivity#finishedRequest(boolean)}.
+     *
      * @throws Exception If the callback is null.
      */
     private void authenticatedSuccessfully() throws Exception {
@@ -193,6 +214,7 @@ public class LoginManager {
 
     /**
      * Calls {@link com.thundercats.queuer.activities.LoginActivity#finishedRequest(boolean)}.
+     *
      * @throws Exception If the callback is null.
      */
     private void authenticatedUnsuccessfully() throws Exception {
